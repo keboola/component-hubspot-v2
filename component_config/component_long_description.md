@@ -1,0 +1,1 @@
+This component uses the HubSpot API to download the following data from HubSpot:
