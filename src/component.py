@@ -156,11 +156,19 @@ class Component(ComponentBase):
         logging.info(f"Downloading all data of object {object_name}")
         object_properties = self.client.get_crm_object_properties(object_name)
         columns = self._generate_field_schemas_from_properties(object_properties)
+        columns = self._add_id_to_columns_if_not_present(columns)
         table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=columns)
         table_definition = self.create_out_table_definition_from_schema(table_schema, incremental=self.incremental)
         table_definition.columns = self.get_deduplicated_list_of_columns(object_name, table_schema)
         self.write_to_table(object_name, table_definition, data_generator,
                             {"properties": table_definition.columns})
+
+    @staticmethod
+    def _add_id_to_columns_if_not_present(columns: List[FieldSchema]) -> List[FieldSchema]:
+        id_exists = any(column_schema.name == "id" for column_schema in columns)
+        if not id_exists:
+            columns.append(FieldSchema(name="id", base_type=SupportedDataTypes.STRING))
+        return columns
 
     def write_to_table(self, object_name: str, table_definition: TableDefinition, data_generator: Callable,
                        data_generator_kwargs) -> None:
