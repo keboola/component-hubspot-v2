@@ -102,7 +102,7 @@ class HubspotClient(HttpClient):
     def get_campaigns(self) -> Generator:
         for campaign_page in self._get_paged_result_pages(ENDPOINT_CAMPAIGNS_BY_ID, {}, 'campaigns'):
             for campaign in campaign_page:
-                yield list(self.get_campaign_details(campaign.get('id')))
+                yield [self.get_campaign_details(campaign.get('id'))]
 
     def get_campaign_details(self, campaign_id: str) -> Dict:
         try:

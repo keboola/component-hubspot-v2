@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "title": "Configuration",
+  "title": "Authentication Configuration",
   "required": [
     "#private_app_token"
   ],
