@@ -1,19 +1,16 @@
 {
   "type": "object",
-  "title": "extractor configuration",
+  "title": "Configuration",
   "required": [
-    "print_hello"
+    "#private_app_token"
   ],
   "properties": {
-    "print_hello": {
-      "type": "boolean",
-      "title": "Print Hello",
-      "propertyOrder": 1
-    },
-    "debug": {
-      "type": "boolean",
-      "title": "Debug",
-      "propertyOrder": 2
+    "#private_app_token": {
+      "type": "string",
+      "title": "Private App Token",
+      "format": "password",
+      "propertyOrder": 10,
+      "description": "Your private app token created <a href=\"https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app\">in Hubspot</a>"
     }
   }
 }

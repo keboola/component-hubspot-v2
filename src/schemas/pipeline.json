@@ -1,0 +1,44 @@
+{
+  "name": "pipeline",
+  "description": "",
+  "primary_keys": [
+    "id"
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "label",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "display_order",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "created_at",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "archived_at",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "updated_at",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "archived",
+      "description": "",
+      "base_type": "BOOLEAN"
+    }
+  ]
+}

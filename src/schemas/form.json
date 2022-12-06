@@ -1,0 +1,34 @@
+{
+  "name": "form",
+  "description": "",
+  "primary_keys": [
+    "id"
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "createdAt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "updatedAt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "archives",
+      "description": "",
+      "base_type": "BOOLEAN"
+    }
+  ]
+}

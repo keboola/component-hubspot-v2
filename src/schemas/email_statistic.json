@@ -1,0 +1,34 @@
+{
+  "name": "email_statistic",
+  "description": "",
+  "primary_keys": [
+    "id"
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "",
+      "description": "",
+      "base_type": "STRING"
+    }
+  ]
+}

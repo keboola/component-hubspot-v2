@@ -1,0 +1,74 @@
+{
+  "name": "contact_list",
+  "description": "",
+  "primary_keys": [
+      "listId"
+  ],
+  "fields": [
+    {
+      "name" : "listId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "portalId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "createdAt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "updatedAt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "listType",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "authorId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "filters",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name" : "teamIds",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "archived",
+      "description": "",
+      "base_type": "BOOLEAN"
+    },
+    {
+      "name" : "dynamic",
+      "description": "",
+      "base_type": "BOOLEAN"
+    },
+    {
+      "name" : "internal",
+      "description": "",
+      "base_type": "BOOLEAN"
+    },
+    {
+      "name" : "readOnly",
+      "description": "",
+      "base_type": "BOOLEAN"
+    }
+  ]
+}

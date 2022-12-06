@@ -1,0 +1,64 @@
+{
+  "name": "owner",
+  "description": "",
+  "primary_keys": [
+    "id"
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "email",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "first_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "last_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "user_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "created_at",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "updated_at",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "archived",
+      "description": "",
+      "base_type": "BOOLEAN"
+    },
+    {
+      "name": "teams_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "teams_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "teams_primary",
+      "description": "",
+      "base_type": "BOOLEAN"
+    }
+  ]
+}

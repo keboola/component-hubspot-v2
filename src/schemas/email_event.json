@@ -1,0 +1,174 @@
+{
+  "name": "email_event",
+  "description": "",
+  "primary_keys": [
+    "id"
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "appId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "smtpId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "portalId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "emailCampaignId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "type",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "response",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "recipient",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "appName",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "sentBy_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "sentBy_created",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "created",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "attempt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "browser_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "location_state",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "userAgent",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "browser_type",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "browser_family",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "browser_url",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "location_zipcode",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "location_city",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "filteredEvent",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "browser_producer",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "browser_version",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "deviceType",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "duration",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "location_country",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "browser_producerUrl",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "cc",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "bcc",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "from",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "replyTo",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "subject",
+      "description": "",
+      "base_type": "STRING"
+    }
+  ]
+}
