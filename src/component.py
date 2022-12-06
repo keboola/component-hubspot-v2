@@ -58,20 +58,16 @@ class Component(ComponentBase):
         params = self.configuration.parameters
         access_token = params.get(KEY_ACCESS_TOKEN)
         self.state = self.get_state_file()
-
         destination_settings = params.get(KEY_DESTINATION, {})
         load_type = destination_settings.get(KEY_LOAD_TYPE, "incremental_load")
-        self.incremental = False if load_type == "full_load" else True
-
+        self.incremental = load_type != "full_load"
         self.client = HubspotClient(access_token=access_token)
-
         endpoints_to_fetch = params.get(KEY_ENDPOINT)
         for endpoint in endpoints_to_fetch:
             if endpoint in ENDPOINT_LIST:
                 self.endpoint_func_mapping[endpoint]()
             else:
                 raise UserException(f"Endpoint : {endpoint} is not valid")
-
         self.write_state_file(self.state)
 
     def get_contacts(self) -> None:
@@ -92,13 +88,13 @@ class Component(ComponentBase):
     def get_pipelines(self) -> None:
         pipeline_schema = self.get_table_schema_by_name("pipeline")
         pipeline_table = self.create_out_table_definition_from_schema(pipeline_schema, incremental=self.incremental)
-        pipeline_table.columns = self.get_deduplicated_list_of_fields("pipeline", pipeline_schema)
+        pipeline_table.columns = self.get_deduplicated_list_of_columns("pipeline", pipeline_schema)
         pipeline_writer = ElasticDictWriter(pipeline_table.full_path, pipeline_table.columns)
 
         pipeline_stage_schema = self.get_table_schema_by_name("pipeline_stage")
         pipeline_stage_table = self.create_out_table_definition_from_schema(pipeline_stage_schema,
                                                                             incremental=self.incremental)
-        pipeline_stage_table.columns = self.get_deduplicated_list_of_fields("pipeline_stage", pipeline_stage_schema)
+        pipeline_stage_table.columns = self.get_deduplicated_list_of_columns("pipeline_stage", pipeline_stage_schema)
         pipeline_stage_writer = ElasticDictWriter(pipeline_stage_table.full_path, pipeline_stage_table.columns)
 
         deal_pipelines = self.client.get_deal_pipelines()
@@ -142,7 +138,7 @@ class Component(ComponentBase):
     def get_owners(self) -> None:
         table_schema = self.get_table_schema_by_name("owner")
         table_definition = self.create_out_table_definition_from_schema(table_schema, incremental=self.incremental)
-        table_definition.columns = self.get_deduplicated_list_of_fields("owner", table_schema)
+        table_definition.columns = self.get_deduplicated_list_of_columns("owner", table_schema)
         writer = ElasticDictWriter(table_definition.full_path, table_definition.columns)
         for page in self.client.get_owners():
             for item in page:
@@ -159,10 +155,10 @@ class Component(ComponentBase):
     def fetch_and_save_crm_object(self, object_name: str, data_generator: Callable) -> None:
         logging.info(f"Downloading all data of object {object_name}")
         object_properties = self.client.get_crm_object_properties(object_name)
-        fields = self._generate_field_schemas_from_properties(object_properties)
-        table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=fields)
+        columns = self._generate_field_schemas_from_properties(object_properties)
+        table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=columns)
         table_definition = self.create_out_table_definition_from_schema(table_schema, incremental=self.incremental)
-        table_definition.columns = self.get_deduplicated_list_of_fields(object_name, table_schema)
+        table_definition.columns = self.get_deduplicated_list_of_columns(object_name, table_schema)
         self.write_to_table(object_name, table_definition, data_generator,
                             {"properties": table_definition.columns})
 
@@ -174,15 +170,15 @@ class Component(ComponentBase):
                 c = item.to_dict()
                 writer.writerow({"id": c["id"], **(c["properties"])})
         writer.close()
-        table_definition.columns = writer.fieldnames
+        table_definition = self._normalize_column_names(writer.fieldnames, table_definition)
         self.write_manifest(table_definition)
         self.state[object_name] = writer.fieldnames
 
-    def get_deduplicated_list_of_fields(self, object_name: str, table_schema: TableSchema) -> List:
-        fields_in_state = self.state.get(object_name, [])
-        all_fields = fields_in_state + table_schema.field_names
-        all_fields = list(dict.fromkeys(all_fields))
-        return all_fields
+    def get_deduplicated_list_of_columns(self, object_name: str, table_schema: TableSchema) -> List:
+        columns_in_state = self.state.get(object_name, [])
+        all_columns = columns_in_state + table_schema.field_names
+        all_columns = list(dict.fromkeys(all_columns))
+        return all_columns
 
     def get_engagements(self) -> None:
         logging.info("Downloading all Engagements")
@@ -219,7 +215,7 @@ class Component(ComponentBase):
         logging.info(f"Downloading all {schema_name.replace('_', ' ')}s")
         schema = self.get_table_schema_by_name(schema_name)
         table = self.create_out_table_definition_from_schema(schema, incremental=self.incremental)
-        table.columns = self.get_deduplicated_list_of_fields(schema_name, schema)
+        table.columns = self.get_deduplicated_list_of_columns(schema_name, schema)
         writer = ElasticDictWriter(table.full_path, table.columns)
 
         parser = FlattenJsonParser()
@@ -233,14 +229,14 @@ class Component(ComponentBase):
         self.write_manifest(table)
         self.state[schema_name] = writer.fieldnames
 
-    def _generate_field_schemas_from_properties(self, field_properties: List) -> List[FieldSchema]:
-        fields = []
-        for field_property in field_properties:
-            keboola_type = self._convert_hubspot_type_to_keboola_base_type(field_property.get("type"))
-            fields.append(FieldSchema(name=field_property.get("name"),
-                                      base_type=keboola_type,
-                                      description=field_property.get("description")))
-        return fields
+    def _generate_field_schemas_from_properties(self, column_properties: List) -> List[FieldSchema]:
+        columns = []
+        for column_property in column_properties:
+            keboola_type = self._convert_hubspot_type_to_keboola_base_type(column_property.get("type"))
+            columns.append(FieldSchema(name=column_property.get("name"),
+                                       base_type=keboola_type,
+                                       description=column_property.get("description")))
+        return columns
 
     @staticmethod
     def _convert_hubspot_type_to_keboola_base_type(hubspot_type: str) -> SupportedDataTypes:
@@ -264,11 +260,26 @@ class Component(ComponentBase):
             state = self.get_state_file()
             return state.get("last_run", "1997-01-01")
         try:
-            parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp()*1000)
+            parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp() * 1000)
         except (AttributeError, TypeError) as err:
             raise UserException(f"Failed to parse date {date_to_parse}") from err
         self.state["last_run"] = parsed_timestamp
         return parsed_timestamp
+
+    @staticmethod
+    def _normalize_column_names(column_names: List, table_definition: TableDefinition) -> TableDefinition:
+        """
+        Function to make the columns conform to KBC
+        """
+
+        key_map = {}
+        for i, column_name in enumerate(column_names):
+            if len(column_name) >= 64:
+                key_map[column_name] = column_name[:63]
+                column_names[i] = column_name[:63]
+        table_definition.table_metadata.column_metadata = {key_map.get(k, k): v for (k, v) in
+                                                           table_definition.table_metadata.column_metadata.items()}
+        return table_definition
 
 
 if __name__ == "__main__":
