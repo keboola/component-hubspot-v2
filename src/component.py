@@ -3,6 +3,7 @@ import logging
 import dateparser
 from os import path
 import json
+import hashlib
 
 from typing import Callable, List
 
@@ -361,12 +362,9 @@ class Component(ComponentBase):
         self.state["last_run"] = parsed_timestamp
         return parsed_timestamp
 
-    @staticmethod
-    def _normalize_column_names(column_names: List, table_definition: TableDefinition) -> TableDefinition:
+    def _normalize_column_names(self, column_names: List, table_definition: TableDefinition) -> TableDefinition:
         """
-        Function to make the columns conform to KBC, max length of column is 64. If the shortening of columns creates
-        duplicates, an id is added
-        TODO : Maybe do this with a hash instead
+        Function to make the columns conform to KBC, max length of column is 64.
         """
 
         key_map = {}
@@ -374,12 +372,16 @@ class Component(ComponentBase):
 
         for i, column_name in enumerate(column_names):
             if len(column_name) >= 64:
-                count += 1
-                key_map[column_name] = f"{column_name[:60]}_{i:0>2}"
-                column_names[i] = f"{column_name[:60]}_{i:0>2}"
+                hashed = self._hash_column(column_name)
+                key_map[column_name] = f"{column_name[:30]}_{hashed}"
+                column_names[i] = f"{column_name[:30]}_{hashed}"
         table_definition.table_metadata.column_metadata = {key_map.get(k, k): v for (k, v) in
                                                            table_definition.table_metadata.column_metadata.items()}
         return table_definition
+
+    @staticmethod
+    def _hash_column(columns_name: str) -> str:
+        return hashlib.md5(columns_name.encode('utf-8')).hexdigest()
 
     @staticmethod
     def _update_column_names(table_name: str, column_names: List,
