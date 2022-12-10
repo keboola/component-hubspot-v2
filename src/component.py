@@ -179,13 +179,14 @@ class Component(ComponentBase):
         pipeline_writer.close()
         pipeline_stage_writer.close()
 
+        self.state["pipeline"] = pipeline_writer.fieldnames
+        self.state["pipeline_stage"] = pipeline_stage_writer.fieldnames
+
         pipeline_table.columns = pipeline_writer.fieldnames
         self.write_manifest(pipeline_table)
-        self.state["pipeline"] = pipeline_writer.fieldnames
 
         pipeline_stage_table.columns = pipeline_stage_writer.fieldnames
         self.write_manifest(pipeline_stage_table)
-        self.state["pipeline_stage"] = pipeline_stage_writer.fieldnames
 
     def get_owners(self) -> None:
         table_schema = self.get_table_schema_by_name("owner")
@@ -197,9 +198,9 @@ class Component(ComponentBase):
                 c = item.to_dict()
                 writer.writerow(c)
         writer.close()
+        self.state["owner"] = writer.fieldnames
         table_definition.columns = writer.fieldnames
         self.write_manifest(table_definition)
-        self.state["owner"] = writer.fieldnames
 
     def get_tickets(self) -> None:
         self.fetch_and_save_crm_object("ticket", self.client.get_tickets)
@@ -248,9 +249,9 @@ class Component(ComponentBase):
                 c = item.to_dict()
                 writer.writerow({"id": c["id"], **(c["properties"])})
         writer.close()
+        self.state[object_name] = writer.fieldnames
         table_definition = self._normalize_column_names(writer.fieldnames, table_definition)
         self.write_manifest(table_definition)
-        self.state[object_name] = writer.fieldnames
 
     def get_deduplicated_list_of_columns(self, object_name: str, table_schema: TableSchema) -> List:
         columns_in_state = self.state.get(object_name, [])
@@ -278,11 +279,11 @@ class Component(ComponentBase):
             writer.writerows(parsed_data)
 
         writer.close()
+        self.state[schema_name] = writer.fieldnames
         table.columns = writer.fieldnames
         table = self._update_column_names(schema_name, writer.fieldnames, table)
         table = self._normalize_column_names(writer.fieldnames, table)
         self.write_manifest(table)
-        self.state[schema_name] = writer.fieldnames
 
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
         logging.info(f"Fetching associations from {from_object_type} to {to_object_type}")
@@ -363,14 +364,19 @@ class Component(ComponentBase):
     @staticmethod
     def _normalize_column_names(column_names: List, table_definition: TableDefinition) -> TableDefinition:
         """
-        Function to make the columns conform to KBC
+        Function to make the columns conform to KBC, max length of column is 64. If the shortening of columns creates
+        duplicates, an id is added
+        TODO : Maybe do this with a hash instead
         """
 
         key_map = {}
+        count = 0
+
         for i, column_name in enumerate(column_names):
             if len(column_name) >= 64:
-                key_map[column_name] = column_name[:63]
-                column_names[i] = column_name[:63]
+                count += 1
+                key_map[column_name] = f"{column_name[:60]}_{i:0>2}"
+                column_names[i] = f"{column_name[:60]}_{i:0>2}"
         table_definition.table_metadata.column_metadata = {key_map.get(k, k): v for (k, v) in
                                                            table_definition.table_metadata.column_metadata.items()}
         return table_definition
