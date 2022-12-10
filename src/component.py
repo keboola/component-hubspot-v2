@@ -228,6 +228,8 @@ class Component(ComponentBase):
             columns = self._generate_field_schemas_from_properties(classified_object_properties)
         else:
             columns = []
+
+        # It is necessary to add id column if not present as it is not part of the object properties
         columns = self._add_id_to_columns_if_not_present(columns)
         return columns
 
@@ -278,6 +280,7 @@ class Component(ComponentBase):
         writer.close()
         table.columns = writer.fieldnames
         table = self._update_column_names(schema_name, writer.fieldnames, table)
+        table = self._normalize_column_names(writer.fieldnames, table)
         self.write_manifest(table)
         self.state[schema_name] = writer.fieldnames
 
