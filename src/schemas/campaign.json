@@ -9,6 +9,81 @@
       "name": "id",
       "description": "",
       "base_type": "STRING"
+    },
+    {
+      "name": "counters_delivered",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "appId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "subject",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "contentId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "lastProcessingStateChangeAt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "numIncluded",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "lastProcessingFinishedAt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "processingState",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "appName",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "type",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "lastProcessingStartedAt",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "counters_sent",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "counters_processed",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "counters_open",
+      "description": "",
+      "base_type": "STRING"
     }
   ]
 }
