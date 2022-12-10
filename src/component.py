@@ -368,8 +368,6 @@ class Component(ComponentBase):
         """
 
         key_map = {}
-        count = 0
-
         for i, column_name in enumerate(column_names):
             if len(column_name) >= 64:
                 hashed = self._hash_column(column_name)
