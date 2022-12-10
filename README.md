@@ -3,7 +3,7 @@ Hubspot Extractor
 
 The HubSpot CRM helps companies grow traffic, convert leads, get insights to close more deals, etc.
 
-This component uses the HubSpot API to extract data of the CRM objects from Hubspot
+This component uses the HubSpot API to extract data of the CRM and Marketing objects from Hubspot
 
 **Table of contents:**
 
@@ -47,6 +47,8 @@ If you need more endpoints, please submit your request to
 Additional Endpoint Options
 ===================
 
+## Additional properties
+
 Endpoint Definitions and their Outputs
 ======
 
@@ -60,7 +62,7 @@ The Companies data is saved into the **company.csv** table
 
 ## Contacts
 
-Contacts store information about individuals, their names, emails, 
+Contacts store information about individuals, their names, emails, addresses, etc.
 
 The Contacts data is saved into the **contact.csv** table
 

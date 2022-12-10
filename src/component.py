@@ -239,7 +239,7 @@ class Component(ComponentBase):
     def _add_id_to_columns_if_not_present(columns: List[FieldSchema]) -> List[FieldSchema]:
         id_exists = any(column_schema.name == "id" for column_schema in columns)
         if not id_exists:
-            columns.append(FieldSchema(name="id", base_type=SupportedDataTypes.STRING))
+            columns.append(FieldSchema(name="id", description="", base_type=SupportedDataTypes.STRING))
         return columns
 
     def fetch_and_write_to_table(self, object_name: str, table_definition: TableDefinition, data_generator: Callable,
