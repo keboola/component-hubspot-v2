@@ -7,6 +7,7 @@ from typing import Optional, Dict, Generator, List
 import requests
 from keboola.http_client import HttpClient
 from hubspot import HubSpot
+from hubspot.crm.associations import BatchInputPublicObjectId
 from urllib3.util.retry import Retry
 
 BASE_URL = "https://api.hubapi.com/"
@@ -20,6 +21,7 @@ ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
 
 PAGE_MAX_SIZE = 100
 DEFAULT_V1_LIMIT = 1000
+BATCH_LIMIT = 100
 
 MAX_RETRIES = 5
 MAX_TIMEOUT = 10
@@ -45,26 +47,19 @@ class HubspotClient(HttpClient):
     def get_crm_object_properties(self, object_type: str) -> List:
         return self.client_v3.crm.properties.core_api.get_all(object_type=object_type).to_dict().get("results")
 
-    def get_contacts(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.contacts.basic_api, properties=properties)
+    def get_contacts(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.contacts.basic_api, properties=properties, archived=archived)
 
-    def get_companies(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.companies.basic_api, properties=properties)
+    def get_companies(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.companies.basic_api, properties=properties,
+                                        archived=archived)
 
-    def get_associations(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.associations.basic_api, properties=properties)
+    def get_deals(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.deals.basic_api, properties=properties, archived=archived)
 
-    def get_deals(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.deals.basic_api, properties=properties)
-
-    def get_extensions(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.extensions.basic_api, properties=properties)
-
-    def get_imports(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.imports.basic_api, properties=properties)
-
-    def get_line_items(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.line_items.basic_api, properties=properties)
+    def get_line_items(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.line_items.basic_api, properties=properties,
+                                        archived=archived)
 
     def get_deal_pipelines(self) -> List:
         return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="deals").to_dict().get("results")
@@ -72,32 +67,37 @@ class HubspotClient(HttpClient):
     def get_ticket_pipelines(self) -> List:
         return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="tickets").to_dict().get("results")
 
-    def get_products(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.products.basic_api, properties=properties)
+    def get_products(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.products.basic_api, properties=properties, archived=archived)
 
-    def get_quotes(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.quotes.basic_api, properties=properties)
+    def get_quotes(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.quotes.basic_api, properties=properties, archived=archived)
 
     def get_owners(self) -> Generator:
         return self._paginate_v3_object(self.client_v3.crm.owners.owners_api)
 
-    def get_tickets(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.tickets.basic_api, properties=properties)
+    def get_tickets(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.tickets.basic_api, properties=properties, archived=archived)
 
-    def get_engagements_notes(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.objects.notes.basic_api, properties=properties)
+    def get_engagements_notes(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.objects.notes.basic_api, properties=properties,
+                                        archived=archived)
 
-    def get_engagements_calls(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.objects.calls.basic_api, properties=properties)
+    def get_engagements_calls(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.objects.calls.basic_api, properties=properties,
+                                        archived=archived)
 
-    def get_engagements_tasks(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.objects.tasks.basic_api, properties=properties)
+    def get_engagements_tasks(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.objects.tasks.basic_api, properties=properties,
+                                        archived=archived)
 
-    def get_engagements_meetings(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.objects.meetings.basic_api, properties=properties)
+    def get_engagements_meetings(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.objects.meetings.basic_api, properties=properties,
+                                        archived=archived)
 
-    def get_engagements_emails(self, properties: Dict) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.objects.emails.basic_api, properties=properties)
+    def get_engagements_emails(self, properties: Dict, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.objects.emails.basic_api, properties=properties,
+                                        archived=archived)
 
     def get_campaigns(self) -> Generator:
         for campaign_page in self._get_paged_result_pages(ENDPOINT_CAMPAIGNS_BY_ID, {}, 'campaigns'):
@@ -125,6 +125,24 @@ class HubspotClient(HttpClient):
 
     def get_forms(self) -> Generator:
         yield from self._get_paged_result_pages_v3(ENDPOINT_FORMS, {})
+
+    def get_associations(self, object_id_generator: Generator, from_object_type: str, to_object_type: str) -> None:
+        batch_inputs = self._format_batch_inputs(object_id_generator)
+        for input_chuck in self.divide_chunks(batch_inputs, BATCH_LIMIT):
+            batch_input_chunk = BatchInputPublicObjectId(inputs=input_chuck)
+            response = self.client_v3.crm.associations.batch_api.read(from_object_type=from_object_type,
+                                                                      to_object_type=to_object_type,
+                                                                      batch_input_public_object_id=batch_input_chunk)
+            yield response.results
+
+    @staticmethod
+    def _format_batch_inputs(object_ids):
+        return [{"id": object_id} for object_id in object_ids]
+
+    @staticmethod
+    def divide_chunks(list_to_divide, list_len):
+        for i in range(0, len(list_to_divide), list_len):
+            yield list_to_divide[i:i + list_len]
 
     @staticmethod
     def _paginate_v3_object(api_object, **kwargs) -> Generator:

@@ -1,0 +1,30 @@
+{
+  "name": "association",
+  "description": "",
+  "primary_keys": [
+    "from_id",
+    "to_id"
+  ],
+  "fields": [
+    {
+      "name": "from_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "to_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "from_object_type",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "to_object_type",
+      "description": "",
+      "base_type": "STRING"
+    }
+  ]
+}

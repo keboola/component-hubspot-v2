@@ -1,37 +1,133 @@
 Hubspot Extractor
 =============
 
-Description
+The HubSpot CRM helps companies grow traffic, convert leads, get insights to close more deals, etc.
+
+This component uses the HubSpot API to extract data of the CRM objects from Hubspot
 
 **Table of contents:**
 
 [TOC]
 
-Functionality notes
-===================
-
 Prerequisites
 =============
+You need to create a [Private App](https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app) 
+in your account and enable all following scopes:
+![scopes](docs/imgs/scopes.png)
 
-Get the API token, register application, etc.
-
-Features
-========
-
-| **Feature**             | **Note**                                      |
-|-------------------------|-----------------------------------------------|
-| Generic UI form         | Dynamic UI form                               |
-| Row Based configuration | Allows structuring the configuration in rows. |
-| oAuth                   | oAuth authentication enabled                  |
-| Incremental loading     | Allows fetching data in new increments.       |
-| Backfill mode           | Support for seamless backfill setup.          |
-| Date range filter       | Specify date range.                           |
-
-Supported endpoints
+Supported Endpoints
 ===================
+
+The following endpoints are downloadable via this component :
+
+* Campaigns
+* Companies
+* Contacts
+* Contact Lists
+* Deals
+* Deal Line Items
+* Email Events
+* Marketing Email Statistics
+* Forms
+* Engagements
+  * Calls
+  * Emails
+  * Notes
+  * Meetings
+  * Tasks
+* Owners
+* Pipelines
+* Products
+* Quotes
+* Tickets
 
 If you need more endpoints, please submit your request to
 [ideas.keboola.com](https://ideas.keboola.com/)
+
+Additional Endpoint Options
+===================
+
+Endpoint Definitions and their Outputs
+======
+
+## Campaigns
+
+The Campaign data is saved into the **campaign.csv** table
+
+## Companies
+
+The Companies data is saved into the **company.csv** table
+
+## Contacts
+
+Contacts store information about individuals, their names, emails, 
+
+The Contacts data is saved into the **contact.csv** table
+
+## Contact Lists
+
+The Contact Lists data is saved into the **contact_list.csv** table
+
+## Deals
+
+The Deals data is saved into the **deal.csv** table
+
+## Deal Line Items
+
+The Deal Line Items data is saved into the **line_item.csv** table
+
+## Email Events
+
+The Email Events data is saved into the **email_event.csv** table
+
+## Marketing Email Statistics
+
+The Marketing Email Statistics data is saved into the **_email_statistic.csv** table
+
+## Forms
+
+The Forms data is saved into the **form.csv** table
+
+## Engagements - Calls
+
+The Calls data is saved into the **call.csv** table
+
+## Engagements - Emails
+
+The Emails data is saved into the **email.csv** table
+
+## Engagements - Notes
+
+The Notes data is saved into the **note.csv** table
+
+## Engagements - Meetings
+
+The Meetings data is saved into the **meetings.csv** table
+
+## Engagements - Tasks
+
+The Tasks data is saved into the **task.csv** table
+
+## Owners
+
+The Owners data is saved into the **owner.csv** table
+
+## Pipelines
+
+The Pipelines data is saved into the **pipeline.csv** and **pipeline_stage.csv** table
+
+## Products
+
+The Products data is saved into the **product.csv** table
+
+## Quotes
+
+The Quotes data is saved into the **quote.csv** table
+
+## Tickets
+
+The Tickets data is saved into the **ticket.csv** table
+
 
 Configuration
 =============
@@ -42,10 +138,7 @@ Param 1
 Param 2
 -------
 
-Output
-======
-
-List of tables, foreign keys, schema.
+## Output name
 
 Development
 -----------

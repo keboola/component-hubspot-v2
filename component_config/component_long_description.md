@@ -1,1 +1,1 @@
-This component uses the HubSpot API to download the following data from HubSpot:
+This component uses the HubSpot API to extract data of the CRM objects from Hubspot

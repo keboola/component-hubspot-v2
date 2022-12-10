@@ -14,19 +14,80 @@
       "name": "name",
       "description": "",
       "base_type": "STRING"
-    },
+    }
+    ,
     {
-      "name": "",
+      "name": "author",
       "description": "",
       "base_type": "STRING"
     },
     {
-      "name": "",
+      "name": "publishedById",
       "description": "",
       "base_type": "STRING"
     },
     {
-      "name": "",
+      "name": "authorName",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "subject",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "replyTo",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "customReplyTo",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "categoryId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "emailType",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "language",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "url",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "archived",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "emailbodyPlaintext",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "absoluteUrl",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "portalId",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "contentAccessRuleIds",
       "description": "",
       "base_type": "STRING"
     }
