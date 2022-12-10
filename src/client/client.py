@@ -7,7 +7,7 @@ from typing import Optional, Dict, Generator, List
 import requests
 from keboola.http_client import HttpClient
 from hubspot import HubSpot
-from hubspot.crm.associations import BatchInputPublicObjectId, ApiException
+from hubspot.crm.associations import BatchInputPublicObjectId
 from urllib3.util.retry import Retry
 
 BASE_URL = "https://api.hubapi.com/"
