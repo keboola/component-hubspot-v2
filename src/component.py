@@ -4,6 +4,8 @@ import dateparser
 from os import path
 import json
 import hashlib
+import warnings
+import datetime
 
 from typing import Callable, List
 
@@ -14,20 +16,32 @@ from keboola.component.dao import SupportedDataTypes, TableDefinition
 from keboola.component.table_schema import TableSchema, FieldSchema
 
 from json_parser import FlattenJsonParser
-from client import HubspotClient
+from client import HubspotClient, HubspotClientException
 
 KEY_ACCESS_TOKEN = "#private_app_token"
-KEY_ENDPOINT = "endpoints"
-KEY_ASSOCIATIONS = "associations"
-KEY_DESTINATION = "destination"
-KEY_LOAD_TYPE = "load_type"
 
-KEY_ARCHIVED = "archived"
+KEY_ENDPOINT = "endpoints"
+
+KEY_ADDITIONAL_PROPERTIES = "additional_properties"
 KEY_OBJECT_PROPERTIES = "object_properties"  # base, all, custom
 
-KEY_EMAIL_METRICS_SINCE = "email_metrics_since"
+KEY_ASSOCIATIONS = "associations"
+KEY_ASSOCIATION_FROM_OBJECT = "from_object"
+KEY_ASSOCIATION_TO_OBJECT = "to_object"
 
-REQUIRED_PARAMETERS = [KEY_ACCESS_TOKEN]
+KEY_FETCH_SETTINGS = "fetch_settings"
+KEY_FETCH_MODE = "fetch_mode"
+KEY_DATE_FROM = "date_from"
+KEY_ARCHIVED = "archived"
+
+KEY_DESTINATION = "destination_settings"
+KEY_LOAD_MODE = "load_mode"
+
+DEFAULT_LOAD_MODE = "incremental_load"
+DEFAULT_FETCH_MODE = "full_fetch"
+DEFAULT_OBJECT_PROPERTIES = "base"
+
+REQUIRED_PARAMETERS = [KEY_ACCESS_TOKEN, KEY_ENDPOINT, KEY_DESTINATION]
 REQUIRED_IMAGE_PARS = []
 
 ENDPOINT_LIST = ["campaign", "contact", "company", "deal", "deal_line_item", "quote", "product", "owner",
@@ -35,6 +49,12 @@ ENDPOINT_LIST = ["campaign", "contact", "company", "deal", "deal_line_item", "qu
                  "meeting", "email", "email_statistic"]
 
 COLUMN_NAME_SWAP = {"contact_list": {"listId": "id"}}
+
+# Ignore dateparser warnings regarding pytz
+warnings.filterwarnings(
+    "ignore",
+    message="The localize method is no longer necessary, as this time zone supports the fold attribute",
+)
 
 
 class Component(ComponentBase):
@@ -65,26 +85,43 @@ class Component(ComponentBase):
         }
 
         self.incremental = True
+        self.fetch_archived_objects = False
+        self.since_fetch_date = ""
+        self.incremental_fetch_mode = False
+        self.object_properties_mode = None
         super().__init__()
 
     def run(self):
         self.validate_configuration_parameters(REQUIRED_PARAMETERS)
         self.validate_image_parameters(REQUIRED_IMAGE_PARS)
 
+        self.state = self.get_state_file()
+
         params = self.configuration.parameters
         access_token = params.get(KEY_ACCESS_TOKEN)
 
-        self.state = self.get_state_file()
+        endpoints_to_fetch = params.get(KEY_ENDPOINT, [])
+        associations_to_fetch = params.get(KEY_ASSOCIATIONS, [])
+
+        additional_properties = params.get(KEY_ADDITIONAL_PROPERTIES, [])
+        object_properties_mode = additional_properties.get(KEY_OBJECT_PROPERTIES, DEFAULT_OBJECT_PROPERTIES)
+        self.object_properties_mode = object_properties_mode
+
+        fetch_settings = params.get(KEY_FETCH_SETTINGS, [])
+        fetch_mode = fetch_settings.get(KEY_FETCH_MODE, DEFAULT_FETCH_MODE)
+        date_from = fetch_settings.get(KEY_DATE_FROM)
+        self.fetch_archived_objects = fetch_settings.get(KEY_ARCHIVED, False)
+        self.incremental_fetch_mode = fetch_mode != "full_fetch"
+        self.since_fetch_date = self._parse_date(date_from)
+        self.state["last_run"] = self.since_fetch_date
 
         destination_settings = params.get(KEY_DESTINATION, {})
-        load_type = destination_settings.get(KEY_LOAD_TYPE, "incremental_load")
-        self.incremental = load_type != "full_load"
+        load_mode = destination_settings.get(KEY_LOAD_MODE, DEFAULT_LOAD_MODE)
+        self.incremental = load_mode != "full_load"
+
+        self.validate_associations(endpoints_to_fetch, associations_to_fetch)
 
         self.client = HubspotClient(access_token=access_token)
-
-        endpoints_to_fetch = params.get(KEY_ENDPOINT)
-        associations_to_fetch = params.get(KEY_ASSOCIATIONS, [])
-        self.validate_associations(endpoints_to_fetch, associations_to_fetch)
 
         for endpoint in endpoints_to_fetch:
             if endpoint in ENDPOINT_LIST:
@@ -93,8 +130,8 @@ class Component(ComponentBase):
                 raise UserException(f"Endpoint : {endpoint} is not valid")
 
         for association in associations_to_fetch:
-            object_from = association.get("object_from")
-            object_to = association.get("object_to")
+            object_from = association.get(KEY_ASSOCIATION_FROM_OBJECT)
+            object_to = association.get(KEY_ASSOCIATION_TO_OBJECT)
             self.fetch_associations(object_from, object_to)
 
         self.write_state_file(self.state)
@@ -207,22 +244,41 @@ class Component(ComponentBase):
         self.fetch_and_save_crm_object("ticket", self.client.get_tickets)
 
     def fetch_and_save_crm_object(self, object_name: str, data_generator: Callable) -> None:
-        logging.info(f"Downloading all data of object {object_name}")
-        get_archived = self.configuration.parameters.get(KEY_ARCHIVED, False)
+        logging_message = self._generate_crm_object_fetching_message(object_name)
+
+        logging.info(logging_message)
         columns = self._get_additional_properties_to_fetch(object_name)
         table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=columns)
+
         table_definition = self.create_out_table_definition_from_schema(table_schema, incremental=self.incremental)
+
         table_definition.columns = self.get_deduplicated_list_of_columns(object_name, table_schema)
-        extra_arguments = {"properties": table_definition.columns, "archived": get_archived}
+
+        extra_arguments = {"properties": table_definition.columns, "archived": self.fetch_archived_objects,
+                           "incremental": self.incremental_fetch_mode, "since_date": self.since_fetch_date}
+
         self.fetch_and_write_to_table(object_name, table_definition, data_generator, extra_arguments)
 
-    def _get_additional_properties_to_fetch(self, object_name) -> List[FieldSchema]:
-        object_properties_mode = self.configuration.parameters.get(KEY_OBJECT_PROPERTIES, "all")
+    def _generate_crm_object_fetching_message(self, object_name):
+        logging_message = f"Downloading data of object {object_name}. "
+        if self.incremental_fetch_mode:
+            logging_message = f"{logging_message}Fetching data incrementally, from the millisecond timestamp " \
+                              f"{self.since_fetch_date}: in UTC : {self._timestamp_to_datetime(self.since_fetch_date)}."
+        else:
+            logging_message = f"{logging_message}. Fetching all data as Full Fetching mode is selected. "
+            if self.fetch_archived_objects:
+                logging_message = f"{logging_message}. Fetching archived data."
+        return logging_message
 
-        if object_properties_mode == "all":
+    @staticmethod
+    def _timestamp_to_datetime(time_in_millis: int) -> str:
+        return str(datetime.datetime.fromtimestamp(time_in_millis / 1000.0, tz=datetime.timezone.utc))
+
+    def _get_additional_properties_to_fetch(self, object_name) -> List[FieldSchema]:
+        if self.object_properties_mode == "all":
             obj_prop = self.client.get_crm_object_properties(object_name)
             columns = self._generate_field_schemas_from_properties(obj_prop)
-        elif object_properties_mode == "custom":
+        elif self.object_properties_mode == "custom":
             custom_props_str = self.configuration.parameters.get(f"{object_name}_properties", "")
             custom_props = self._parse_properties(custom_props_str)
             obj_prop = self.client.get_crm_object_properties(object_name)
@@ -261,10 +317,9 @@ class Component(ComponentBase):
         return all_columns
 
     def get_email_statistics(self) -> None:
-        email_metrics_since_raw = self.configuration.parameters.get(KEY_EMAIL_METRICS_SINCE)
-        email_metrics_since = self._parse_date(email_metrics_since_raw)
+        updated_since_timestamp = self.since_fetch_date
         self.fetch_and_write_endpoint_with_custom_schema("email_statistic", self.client.get_email_statistics,
-                                                         updated_since=email_metrics_since)
+                                                         updated_since=updated_since_timestamp)
 
     def fetch_and_write_endpoint_with_custom_schema(self, schema_name: str, data_generator: Callable, **kwargs) -> None:
         logging.info(f"Downloading all {schema_name.replace('_', ' ')}s")
@@ -354,7 +409,7 @@ class Component(ComponentBase):
     def _parse_date(self, date_to_parse: str) -> int:
         if date_to_parse.lower() in {"last", "lastrun", "last run"}:
             state = self.get_state_file()
-            return state.get("last_run", "1997-01-01")
+            return state.get("last_run", "800000000000")
         try:
             parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp() * 1000)
         except (AttributeError, TypeError) as err:
@@ -406,7 +461,8 @@ class Component(ComponentBase):
 
     @staticmethod
     def validate_associations(endpoints_to_fetch, associations_to_fetch):
-        endpoints_in_associations = [association.get("object_from") for association in associations_to_fetch]
+        endpoints_in_associations = [association.get(KEY_ASSOCIATION_FROM_OBJECT) for association in
+                                     associations_to_fetch]
         for endpoint in endpoints_in_associations:
             if endpoint not in endpoints_to_fetch:
                 raise UserException(f"All objects for which associations should be fetched must be present "
@@ -420,6 +476,9 @@ if __name__ == "__main__":
         # this triggers the run method by default and is controlled by the configuration.action parameter
         comp.execute_action()
     except UserException as exc:
+        logging.exception(exc)
+        exit(1)
+    except HubspotClientException as exc:
         logging.exception(exc)
         exit(1)
     except Exception as exc:

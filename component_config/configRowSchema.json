@@ -1,1 +1,325 @@
-{}
+{
+  "type": "object",
+  "title": "Configuration",
+  "required": [
+    "endpoints",
+    "additional_properties",
+    "associations",
+    "fetch_settings",
+    "destination_settings"
+  ],
+  "properties": {
+    "endpoints": {
+      "type": "array",
+      "title": "Endpoints",
+      "format": "checkbox",
+      "uniqueItems": true,
+      "propertyOrder": 10,
+      "items": {
+        "type": "string",
+        "enum": [
+          "campaign",
+          "contact",
+          "company",
+          "deal",
+          "deal_line_item",
+          "quote",
+          "product",
+          "owner",
+          "ticket",
+          "contact_list",
+          "email_event",
+          "form",
+          "pipeline",
+          "note",
+          "call",
+          "task",
+          "meeting",
+          "email",
+          "email_statistic"
+        ],
+        "options": {
+          "enum_titles": [
+            "Campaigns",
+            "Contacts",
+            "Companies",
+            "Deals",
+            "Deal Line Items",
+            "Quotes",
+            "Products",
+            "Owners",
+            "Tickets",
+            "Contact Lists",
+            "Email Events",
+            "Forms",
+            "Pipelines",
+            "Notes",
+            "Calls",
+            "Tasks",
+            "Meetings",
+            "Emails",
+            "Email Statistics"
+          ]
+        }
+      },
+      "default": [
+        "contact",
+        "company"
+      ]
+    },
+    "additional_properties": {
+      "title": "Object Properties",
+      "type": "object",
+      "propertyOrder": 20,
+      "properties": {
+        "object_properties": {
+          "title": "Property Fetch Mode",
+          "propertyOrder": 10,
+          "required": true,
+          "type": "string",
+          "enum": [
+            "all",
+            "base",
+            "custom"
+          ],
+          "options": {
+            "enum_titles": [
+              "Fetch All Properties",
+              "Fetch Base Properties",
+              "Fetch Custom Properties"
+            ]
+          },
+          "default": "base"
+        },
+        "call_properties": {
+          "type": "string",
+          "title": "Call - Additional Properties",
+          "format": "textarea",
+          "default": "",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom"
+            }
+          },
+          "description": "Comma separated list of call properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 20
+        },
+        "deal_properties": {
+          "type": "string",
+          "title": "Deal - Additional Properties",
+          "format": "textarea",
+          "default": "authority, budget, campaign_source,need, timeframe, dealname, amount, closedate, pipeline, createdate, engagements_last_meeting_booked, dealtype, hs_createdate, description, start_date, closed_lost_reason, closed_won_reason, end_date, lead_owner, tech_owner, service_amount, contract_type, hubspot_owner_id, partner_name, notes_last_updated",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom"
+            }
+          },
+          "description": "Comma separated list of Deal properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 30
+        },
+        "email_properties": {
+          "type": "string",
+          "title": "Email - Additional Properties",
+          "format": "textarea",
+          "default": "",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom"
+            }
+          },
+          "description": "Comma separated list of email properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 40
+        },
+        "company_properties": {
+          "type": "string",
+          "title": "Company - Additional Properties",
+          "format": "textarea",
+          "default": "about_us, name, phone, facebook_company_page, city, country, website, industry, annualrevenue, linkedin_company_page, hs_lastmodifieddate, hubspot_owner_id, notes_last_updated, description, createdate, numberofemployees, hs_lead_status, founded_year, twitterhandle, linkedinbio",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom"
+            }
+          },
+          "description": "Comma separated list of Company properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 50
+        },
+        "contact_properties": {
+          "type": "string",
+          "title": "Contact - Additional Properties",
+          "format": "textarea",
+          "default": "hs_facebookid, hs_linkedinid, ip_city, ip_country, ip_country_code, newsletter_opt_in, firstname, linkedin_profile, lastname, email, mobilephone, phone, city, country, region, jobtitle, company, website, numemployees, industry, associatedcompanyid, hs_lead_status, lastmodifieddate, source, hs_email_optout, twitterhandle, lead_type, hubspot_owner_id, notes_last_updated, hs_analytics_source, opt_in, createdate, hs_twitterid, lifecyclestage",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom"
+            }
+          },
+          "description": "Comma separated list of contact properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 60
+        },
+        "meeting_properties": {
+          "type": "string",
+          "title": "Meetings - Additional Properties",
+          "format": "textarea",
+          "default": "",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom"
+            }
+          },
+          "description": "Comma separated list of meeting properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 70
+        }
+      }
+    },
+    "associations": {
+      "propertyOrder": 30,
+      "type": "array",
+      "format": "table",
+      "title": "Object Associations",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "title": "Object Association",
+        "properties": {
+          "from_object": {
+            "type": "string",
+            "title" : "From Object",
+            "required": true,
+            "enum": [
+              "campaign",
+              "contact",
+              "company",
+              "deal",
+              "quote",
+              "product",
+              "owner",
+              "ticket",
+              "form",
+              "pipeline",
+              "note",
+              "call",
+              "task",
+              "meeting",
+              "email"
+            ],
+            "default": "contact"
+          },
+          "to_object": {
+            "type": "string",
+            "title" : "To Object",
+            "required": true,
+            "enum": [
+              "campaign",
+              "contact",
+              "company",
+              "deal",
+              "quote",
+              "product",
+              "owner",
+              "ticket",
+              "form",
+              "pipeline",
+              "note",
+              "call",
+              "task",
+              "meeting",
+              "email"
+            ],
+            "default": "meeting"
+          }
+        }
+      }
+    },
+    "fetch_settings": {
+      "title": "Fetch Settings",
+      "type": "object",
+      "propertyOrder": 40,
+      "properties": {
+        "fetch_mode": {
+          "type": "string",
+          "required": true,
+          "enum": [
+            "full_fetch",
+            "incremental_fetch"
+          ],
+          "options": {
+            "enum_titles": [
+              "Full Fetch",
+              "Incremental Fetch"
+            ]
+          },
+          "default": "full_fetch",
+          "format": "checkbox",
+          "title": "Fetch Mode",
+          "description": "If Full fetch is used, all data will be fetched Hubspot every run. If incremental fetch is used, data will be fetched incrementally based on a specified relative or exact date",
+          "propertyOrder": 20
+        },
+        "date_from": {
+          "type": "string",
+          "title": "Fetch From Date",
+          "options": {
+            "dependencies": {
+              "fetch_mode": [
+                "incremental_fetch"
+              ]
+            }
+          },
+          "description": "Date in YYYY-MM-DD format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc. If left empty, all records are downloaded.",
+          "propertyOrder": 30
+        },
+        "archived": {
+          "type": "boolean",
+          "title": "Archived",
+          "options": {
+            "dependencies": {
+              "fetch_mode": [
+                "full_fetch"
+              ]
+            }
+          },
+          "propertyOrder": 70,
+          "format": "checkbox",
+          "description": "If checked archived objects will be fetched. Only possible in Full fetching mode"
+        }
+      }
+    },
+    "destination_settings": {
+      "title": "Destination",
+      "type": "object",
+      "propertyOrder": 50,
+      "properties": {
+        "load_mode": {
+          "type": "string",
+          "required": true,
+          "enum": [
+            "full_load",
+            "incremental_load"
+          ],
+          "options": {
+            "enum_titles": [
+              "Full Load",
+              "Incremental Load"
+            ]
+          },
+          "default": "incremental_load",
+          "format": "checkbox",
+          "title": "Load Mode",
+          "description": "If Full load is used, the destination table will be overwritten every run. If incremental load is used, data will be upserted into the destination table. Tables with a primary key will have rows updated, tables without a primary key will have rows appended.",
+          "propertyOrder": 20
+        }
+      }
+    }
+  }
+}
