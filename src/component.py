@@ -112,7 +112,7 @@ class Component(ComponentBase):
         date_from = fetch_settings.get(KEY_DATE_FROM)
         self.fetch_archived_objects = fetch_settings.get(KEY_ARCHIVED, False)
         self.incremental_fetch_mode = fetch_mode != "full_fetch"
-        self.since_fetch_date = self._parse_date(date_from)
+        self.since_fetch_date = int(self._parse_date(date_from))
         self.state["last_run"] = self.since_fetch_date
 
         destination_settings = params.get(KEY_DESTINATION, {})
@@ -409,7 +409,7 @@ class Component(ComponentBase):
     def _parse_date(self, date_to_parse: str) -> int:
         if date_to_parse.lower() in {"last", "lastrun", "last run"}:
             state = self.get_state_file()
-            return state.get("last_run", "800000000000")
+            return int(state.get("last_run", 800000000000))
         try:
             parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp() * 1000)
         except (AttributeError, TypeError) as err:
