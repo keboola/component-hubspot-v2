@@ -1,6 +1,7 @@
 {
   "type": "object",
   "title": "Configuration",
+  "id": "rootschema",
   "required": [
     "endpoints",
     "additional_properties",
@@ -10,62 +11,126 @@
   ],
   "properties": {
     "endpoints": {
-      "type": "array",
+      "type": "object",
       "title": "Endpoints",
-      "format": "checkbox",
-      "uniqueItems": true,
+      "format": "table",
       "propertyOrder": 10,
-      "items": {
-        "type": "string",
-        "enum": [
-          "campaign",
-          "contact",
-          "company",
-          "deal",
-          "deal_line_item",
-          "quote",
-          "product",
-          "owner",
-          "ticket",
-          "contact_list",
-          "email_event",
-          "form",
-          "pipeline",
-          "note",
-          "call",
-          "task",
-          "meeting",
-          "email",
-          "email_statistic"
-        ],
-        "options": {
-          "enum_titles": [
-            "Campaigns",
-            "Contacts",
-            "Companies",
-            "Deals",
-            "Deal Line Items",
-            "Quotes",
-            "Products",
-            "Owners",
-            "Tickets",
-            "Contact Lists",
-            "Email Events",
-            "Forms",
-            "Pipelines",
-            "Notes",
-            "Calls",
-            "Tasks",
-            "Meetings",
-            "Emails",
-            "Email Statistics"
-          ]
+      "properties": {
+        "campaign": {
+          "title": "Campaign",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "contact": {
+          "title": "Contact",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "company": {
+          "title": "Company",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "deal": {
+          "title": "Deal",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "deal_line_item": {
+          "title": "Deal line item",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "quote": {
+          "title": "Quote",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "product": {
+          "title": "Product",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "owner": {
+          "title": "Owner",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "ticket": {
+          "title": "Ticket",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "contact_list": {
+          "title": "Contact list",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "email_event": {
+          "title": "Email event",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "form": {
+          "title": "Form",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "pipeline": {
+          "title": "Pipeline",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "note": {
+          "title": "Note",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "call": {
+          "title": "Call",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "task": {
+          "title": "Task",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "meeting": {
+          "title": "Meeting",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "email": {
+          "title": "Email",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
+        },
+        "email_statistic": {
+          "title": "Email statistic",
+          "format": "checkbox",
+          "type": "boolean",
+          "default": true
         }
-      },
-      "default": [
-        "contact",
-        "company"
-      ]
+      }
     },
     "additional_properties": {
       "title": "Object Properties",
@@ -95,11 +160,12 @@
           "type": "string",
           "title": "Call - Additional Properties",
           "format": "textarea",
-          "default": "",
+          "default": "hs_call_title, hs_call_status, hs_createdate, hs_lastmodifieddate, hs_object_id, hs_body_preview, hs_created_by, hs_created_by_user_id, hs_engagement_source, hubspot_owner_idm, hs_user_ids_of_all_owners",
           "options": {
             "input_height": "100px",
             "dependencies": {
-              "object_properties": "custom"
+              "object_properties": "custom",
+              "call_hidden": "true"
             }
           },
           "description": "Comma separated list of call properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
@@ -110,11 +176,12 @@
           "type": "string",
           "title": "Deal - Additional Properties",
           "format": "textarea",
-          "default": "authority, budget, campaign_source,need, timeframe, dealname, amount, closedate, pipeline, createdate, engagements_last_meeting_booked, dealtype, hs_createdate, description, start_date, closed_lost_reason, closed_won_reason, end_date, lead_owner, tech_owner, service_amount, contract_type, hubspot_owner_id, partner_name, notes_last_updated",
+          "default": "point_of_contact, product_of_interest, dealname, amount, dealstage, pipeline, closedate, hs_lastmodifieddate,hs_createdate, createdate, hs_deal_stage_probability, hs_deal_stage_probability_shadow, hs_object_id, amount_in_home_currency, days_to_close, hs_exchange_rate, hs_forecast_amount, hs_forecast_probability, hs_is_closed, hs_is_closed_won, hs_is_deal_split, hs_mrr, hs_projected_amount, hs_projected_amount_in_home_currency",
           "options": {
             "input_height": "100px",
             "dependencies": {
-              "object_properties": "custom"
+              "object_properties": "custom",
+              "deal_hidden": "true"
             }
           },
           "description": "Comma separated list of Deal properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
@@ -125,11 +192,12 @@
           "type": "string",
           "title": "Email - Additional Properties",
           "format": "textarea",
-          "default": "",
+          "default": "hubspot_owner_id, hubspot_team_id, hubspot_owner_assigneddate, hs_created_by, hs_createdate, hs_email_bcc_email, hs_email_bcc_firstname, hs_email_bcc_lastname, hs_email_cc_email, hs_email_cc_firstname, hs_email_cc_lastname, hs_email_from_email, hs_email_from_firstname, hs_email_from_lastname, hs_email_headers",
           "options": {
             "input_height": "100px",
             "dependencies": {
-              "object_properties": "custom"
+              "object_properties": "custom",
+              "email_hidden": "true"
             }
           },
           "description": "Comma separated list of email properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
@@ -144,7 +212,8 @@
           "options": {
             "input_height": "100px",
             "dependencies": {
-              "object_properties": "custom"
+              "object_properties": "custom",
+              "company_hidden": "true"
             }
           },
           "description": "Comma separated list of Company properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
@@ -159,7 +228,8 @@
           "options": {
             "input_height": "100px",
             "dependencies": {
-              "object_properties": "custom"
+              "object_properties": "custom",
+              "contact_hidden": "true"
             }
           },
           "description": "Comma separated list of contact properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
@@ -170,16 +240,255 @@
           "type": "string",
           "title": "Meetings - Additional Properties",
           "format": "textarea",
-          "default": "",
+          "default": "hubspot_owner_id, hs_user_ids_of_all_owners, hs_meeting_start_time,hs_meeting_end_time, hs_body_preview_is_truncated, hs_created_by, hs_created_by_user_id, hs_engagement_source, hs_createdate, hs_lastmodifieddate, hs_object_id, hs_timestamp",
           "options": {
             "input_height": "100px",
             "dependencies": {
-              "object_properties": "custom"
+              "object_properties": "custom",
+              "meeting_hidden": "true"
             }
           },
           "description": "Comma separated list of meeting properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
           "uniqueItems": true,
           "propertyOrder": 70
+        },
+        "email_event_types": {
+          "type": "array",
+          "title": "Email Event Types",
+          "format": "checkbox",
+          "uniqueItems": true,
+          "description": "Select which event types you want to fetch data for",
+          "propertyOrder": 80,
+          "options": {
+            "dependencies": {
+              "email_event_hidden": "true"
+            }
+          },
+          "items": {
+            "type": "string",
+            "enum": [
+              "DEFERRED",
+              "CLICK",
+              "DROPPED",
+              "DELIVERED",
+              "PROCESSED",
+              "OPEN",
+              "BOUNCE",
+              "SENT"
+            ],
+            "options": {
+              "enum_titles": [
+                "Deferred",
+                "Click",
+                "Dropped",
+                "Delivered",
+                "Processed",
+                "Open",
+                "Bounce",
+                "Sent"
+              ]
+            }
+          },
+          "default": [
+            "DEFERRED",
+            "CLICK",
+            "DROPPED",
+            "DELIVERED",
+            "PROCESSED",
+            "OPEN",
+            "BOUNCE",
+            "SENT"
+          ]
+        },
+        "campaign_hidden": {
+          "type": "string",
+          "watch": {
+            "campaign_hide": "rootschema.endpoints.campaign"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{campaign_hide}}"
+        },
+        "contact_hidden": {
+          "type": "string",
+          "watch": {
+            "contact_hide": "rootschema.endpoints.contact"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{contact_hide}}"
+        },
+        "company_hidden": {
+          "type": "string",
+          "watch": {
+            "company_hide": "rootschema.endpoints.company"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{company_hide}}"
+        },
+        "deal_hidden": {
+          "type": "string",
+          "watch": {
+            "deal_hide": "rootschema.endpoints.deal"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{deal_hide}}"
+        },
+        "deal_line_item_hidden": {
+          "type": "string",
+          "watch": {
+            "deal_line_item_hide": "rootschema.endpoints.deal_line_item"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{deal_line_item_hide}}"
+        },
+        "quote_hidden": {
+          "type": "string",
+          "watch": {
+            "quote_hide": "rootschema.endpoints.quote"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{quote_hide}}"
+        },
+        "product_hidden": {
+          "type": "string",
+          "watch": {
+            "product_hide": "rootschema.endpoints.product"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{product_hide}}"
+        },
+        "owner_hidden": {
+          "type": "string",
+          "watch": {
+            "owner_hide": "rootschema.endpoints.owner"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{owner_hide}}"
+        },
+        "ticket_hidden": {
+          "type": "string",
+          "watch": {
+            "ticket_hide": "rootschema.endpoints.ticket"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{ticket_hide}}"
+        },
+        "contact_list_hidden": {
+          "type": "string",
+          "watch": {
+            "contact_list_hide": "rootschema.endpoints.contact_list"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{contact_list_hide}}"
+        },
+        "email_event_hidden": {
+          "type": "string",
+          "watch": {
+            "email_event_hide": "rootschema.endpoints.email_event"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{email_event_hide}}"
+        },
+        "form_hidden": {
+          "type": "string",
+          "watch": {
+            "form_hide": "rootschema.endpoints.form"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{form_hide}}"
+        },
+        "pipeline_hidden": {
+          "type": "string",
+          "watch": {
+            "pipeline_hide": "rootschema.endpoints.pipeline"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{pipeline_hide}}"
+        },
+        "note_hidden": {
+          "type": "string",
+          "watch": {
+            "note_hide": "rootschema.endpoints.note"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{note_hide}}"
+        },
+        "call_hidden": {
+          "type": "string",
+          "watch": {
+            "call_hide": "rootschema.endpoints.call"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{call_hide}}"
+        },
+        "task_hidden": {
+          "type": "string",
+          "watch": {
+            "task_hide": "rootschema.endpoints.task"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{task_hide}}"
+        },
+        "meeting_hidden": {
+          "type": "string",
+          "watch": {
+            "meeting_hide": "rootschema.endpoints.meeting"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{meeting_hide}}"
+        },
+        "email_hidden": {
+          "type": "string",
+          "watch": {
+            "email_hide": "rootschema.endpoints.email"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{email_hide}}"
+        },
+        "email_statistic_hidden": {
+          "type": "string",
+          "watch": {
+            "email_statistic_hide": "rootschema.endpoints.email_statistic"
+          },
+          "options": {
+            "hidden": true
+          },
+          "template": "{{email_statistic_hide}}"
         }
       }
     },
@@ -195,7 +504,7 @@
         "properties": {
           "from_object": {
             "type": "string",
-            "title" : "From Object",
+            "title": "From Object",
             "required": true,
             "enum": [
               "campaign",
@@ -218,7 +527,7 @@
           },
           "to_object": {
             "type": "string",
-            "title" : "To Object",
+            "title": "To Object",
             "required": true,
             "enum": [
               "campaign",

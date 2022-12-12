@@ -5,8 +5,6 @@ from json import JSONDecodeError
 from typing import Optional, Dict, Generator, List
 import requests
 
-from retry import retry
-
 from keboola.http_client import HttpClient
 from hubspot import HubSpot
 from hubspot.crm import contacts, companies, deals, line_items, products, quotes, tickets, owners
@@ -29,7 +27,7 @@ BATCH_LIMIT = 100
 
 MAX_RETRIES = 5
 MAX_TIMEOUT = 10
-DEFAULT_BACKOFF = 0.1
+DEFAULT_BACKOFF = 0.3
 EVENT_TYPES = ["DEFERRED", "CLICK", "DROPPED", "DELIVERED", "PROCESSED", "OPEN", "BOUNCE", "SENT"]
 
 
@@ -40,9 +38,9 @@ class HubspotClientException(Exception):
 class HubspotClient(HttpClient):
     def __init__(self, access_token):
         retry_settings = urlibRetry(
-            total=5,
-            status=5,
-            backoff_factor=0.3,
+            total=MAX_RETRIES,
+            status=MAX_RETRIES,
+            backoff_factor=DEFAULT_BACKOFF,
             allowed_methods=frozenset({"HEAD", "GET", "PUT", "POST"}),
             status_forcelist=(429, 500, 502, 504),
         )
@@ -280,7 +278,6 @@ class HubspotClient(HttpClient):
             after = page.paging.next.after
 
     @staticmethod
-    @retry(HubspotClientException, tries=MAX_RETRIES, backoff=DEFAULT_BACKOFF, max_delay=MAX_TIMEOUT)
     def _get_page_result(api_object, after, exception, **kwargs):
         try:
             return api_object.get_page(after=after, limit=PAGE_MAX_SIZE, **kwargs)
@@ -381,7 +378,6 @@ class HubspotClient(HttpClient):
             search_request.after = page.paging.next.after
 
     @staticmethod
-    @retry(HubspotClientException, tries=MAX_RETRIES, backoff=DEFAULT_BACKOFF, max_delay=MAX_TIMEOUT)
     def _get_search_result(search_callable, search_request, exception):
         try:
             return search_callable(public_object_search_request=search_request)

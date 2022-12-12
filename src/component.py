@@ -51,6 +51,8 @@ ENDPOINT_LIST = ["campaign", "contact", "company", "deal", "deal_line_item", "qu
 
 COLUMN_NAME_SWAP = {"contact_list": {"listId": "id"}}
 
+DEFAULT_DATE_FROM = "1990-01-01"
+
 # Ignore dateparser warnings regarding pytz
 warnings.filterwarnings(
     "ignore",
@@ -110,7 +112,7 @@ class Component(ComponentBase):
 
         fetch_settings = params.get(KEY_FETCH_SETTINGS, [])
         fetch_mode = fetch_settings.get(KEY_FETCH_MODE, DEFAULT_FETCH_MODE)
-        date_from = fetch_settings.get(KEY_DATE_FROM)
+        date_from = fetch_settings.get(KEY_DATE_FROM, DEFAULT_DATE_FROM)
         self.fetch_archived_objects = fetch_settings.get(KEY_ARCHIVED, False)
         self.incremental_fetch_mode = fetch_mode != "full_fetch"
         self.since_fetch_date = int(self._parse_date(date_from))
@@ -125,7 +127,7 @@ class Component(ComponentBase):
         self.client = HubspotClient(access_token=access_token)
 
         for endpoint in endpoints_to_fetch:
-            if endpoint in ENDPOINT_LIST:
+            if endpoints_to_fetch[endpoint]:
                 self.endpoint_func_mapping[endpoint]()
             else:
                 raise UserException(f"Endpoint : {endpoint} is not valid")
@@ -246,8 +248,8 @@ class Component(ComponentBase):
 
     def fetch_and_save_crm_object(self, object_name: str, data_generator: Callable) -> None:
         logging_message = self._generate_crm_object_fetching_message(object_name)
-
         logging.info(logging_message)
+
         columns = self._get_additional_properties_to_fetch(object_name)
         table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=columns)
 
@@ -266,9 +268,10 @@ class Component(ComponentBase):
             logging_message = f"{logging_message}Fetching data incrementally, from the millisecond timestamp " \
                               f"{self.since_fetch_date}: in UTC : {self._timestamp_to_datetime(self.since_fetch_date)}."
         else:
-            logging_message = f"{logging_message}. Fetching all data as Full Fetching mode is selected. "
+            logging_message = f"{logging_message} Fetching all data as Full Fetching mode is selected. "
             if self.fetch_archived_objects:
-                logging_message = f"{logging_message}. Fetching archived data."
+                logging_message = f"{logging_message}Fetching archived data."
+        logging_message = f"{logging_message}Fetching {self.object_properties_mode} object properties"
         return logging_message
 
     @staticmethod
@@ -280,7 +283,8 @@ class Component(ComponentBase):
             obj_prop = self.client.get_crm_object_properties(object_name)
             columns = self._generate_field_schemas_from_properties(obj_prop)
         elif self.object_properties_mode == "custom":
-            custom_props_str = self.configuration.parameters.get(f"{object_name}_properties", "")
+            additional_props = self.configuration.parameters.get(KEY_ADDITIONAL_PROPERTIES, {})
+            custom_props_str = additional_props.get(f"{object_name}_properties", "")
             custom_props = self._parse_properties(custom_props_str)
             obj_prop = self.client.get_crm_object_properties(object_name)
             classified_object_properties = [obj_prop for obj_prop in obj_prop if obj_prop.get("name") in custom_props]
@@ -410,7 +414,7 @@ class Component(ComponentBase):
     def _parse_date(self, date_to_parse: str) -> int:
         if date_to_parse.lower() in {"last", "lastrun", "last run"}:
             state = self.get_state_file()
-            return int(state.get("last_run", 800000000000))
+            return int(state.get("last_run", int(dateparser.parse(DEFAULT_DATE_FROM).timestamp() * 1000)))
         try:
             parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp() * 1000)
         except (AttributeError, TypeError) as err:
@@ -475,7 +479,7 @@ class Component(ComponentBase):
         endpoints_in_associations = [association.get(KEY_ASSOCIATION_FROM_OBJECT) for association in
                                      associations_to_fetch]
         for endpoint in endpoints_in_associations:
-            if endpoint not in endpoints_to_fetch:
+            if not endpoints_to_fetch[endpoint]:
                 raise UserException(f"All objects for which associations should be fetched must be present "
                                     f"in the selected endpoints to be downloaded. The object '{endpoint}' "
                                     f"is not specified in the objects to fetch : '{endpoints_to_fetch}.")
