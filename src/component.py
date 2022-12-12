@@ -414,7 +414,8 @@ class Component(ComponentBase):
         try:
             parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp() * 1000)
         except (AttributeError, TypeError) as err:
-            raise UserException(f"Failed to parse date {date_to_parse}") from err
+            raise UserException(f"Failed to parse date {date_to_parse}, make sure the date is either in YYYY-MM-DD "
+                                f"format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc.") from err
         self.state["last_run"] = parsed_timestamp
         return parsed_timestamp
 
