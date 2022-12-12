@@ -40,8 +40,10 @@ class HubspotClientException(Exception):
 class HubspotClient(HttpClient):
     def __init__(self, access_token):
         retry_settings = urlibRetry(
-            total=3,
+            total=5,
+            status=5,
             backoff_factor=0.3,
+            allowed_methods=frozenset({"HEAD", "GET", "PUT", "POST"}),
             status_forcelist=(429, 500, 502, 504),
         )
         self.client_v3 = HubSpot(access_token=access_token, retry=retry_settings)
