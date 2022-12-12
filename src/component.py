@@ -339,7 +339,7 @@ class Component(ComponentBase):
         self.state[schema_name] = copy.deepcopy(writer.fieldnames)
         table.columns = writer.fieldnames
         table = self._update_column_names(schema_name, copy.deepcopy(writer.fieldnames), table)
-        table = self._normalize_column_names(copy.deepcopy(writer.fieldnames), table)
+        table = self._normalize_column_names(table.columns, table)
         self.write_manifest(table)
 
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
@@ -457,6 +457,15 @@ class Component(ComponentBase):
             else:
                 new_primary_keys.append(primary_key)
         table_definition.primary_key = new_primary_keys
+
+        columns = table_definition.columns
+        new_columns = []
+        for column in columns:
+            if column in list(column_swaps.keys()):
+                new_columns.append(column_swaps[column])
+            else:
+                new_columns.append(column)
+        table_definition.columns = new_columns
 
         return table_definition
 
