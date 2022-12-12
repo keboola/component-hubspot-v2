@@ -3,6 +3,7 @@ import logging
 import dateparser
 from os import path
 import json
+import copy
 import hashlib
 import warnings
 import datetime
@@ -217,8 +218,8 @@ class Component(ComponentBase):
         pipeline_writer.close()
         pipeline_stage_writer.close()
 
-        self.state["pipeline"] = pipeline_writer.fieldnames
-        self.state["pipeline_stage"] = pipeline_stage_writer.fieldnames
+        self.state["pipeline"] = copy.deepcopy(pipeline_writer.fieldnames)
+        self.state["pipeline_stage"] = copy.deepcopy(pipeline_stage_writer.fieldnames)
 
         pipeline_table.columns = pipeline_writer.fieldnames
         self.write_manifest(pipeline_table)
@@ -236,7 +237,7 @@ class Component(ComponentBase):
                 c = item.to_dict()
                 writer.writerow(c)
         writer.close()
-        self.state["owner"] = writer.fieldnames
+        self.state["owner"] = copy.deepcopy(writer.fieldnames)
         table_definition.columns = writer.fieldnames
         self.write_manifest(table_definition)
 
@@ -306,7 +307,7 @@ class Component(ComponentBase):
                 c = item.to_dict()
                 writer.writerow({"id": c["id"], **(c["properties"])})
         writer.close()
-        self.state[object_name] = writer.fieldnames
+        self.state[object_name] = copy.deepcopy(writer.fieldnames)
         table_definition = self._normalize_column_names(writer.fieldnames, table_definition)
         self.write_manifest(table_definition)
 
@@ -335,10 +336,10 @@ class Component(ComponentBase):
             writer.writerows(parsed_data)
 
         writer.close()
-        self.state[schema_name] = writer.fieldnames
+        self.state[schema_name] = copy.deepcopy(writer.fieldnames)
         table.columns = writer.fieldnames
-        table = self._update_column_names(schema_name, writer.fieldnames, table)
-        table = self._normalize_column_names(writer.fieldnames, table)
+        table = self._update_column_names(schema_name, copy.deepcopy(writer.fieldnames), table)
+        table = self._normalize_column_names(copy.deepcopy(writer.fieldnames), table)
         self.write_manifest(table)
 
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
