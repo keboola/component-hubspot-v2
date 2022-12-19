@@ -25,6 +25,7 @@ KEY_ENDPOINT = "endpoints"
 
 KEY_ADDITIONAL_PROPERTIES = "additional_properties"
 KEY_OBJECT_PROPERTIES = "object_properties"  # base, all, custom
+KEY_EMAIL_EVENT_TYPES = "email_event_types"
 
 KEY_ASSOCIATIONS = "associations"
 KEY_ASSOCIATION_FROM_OBJECT = "from_object"
@@ -115,7 +116,7 @@ class Component(ComponentBase):
         date_from = fetch_settings.get(KEY_DATE_FROM, DEFAULT_DATE_FROM)
         self.fetch_archived_objects = fetch_settings.get(KEY_ARCHIVED, False)
         self.incremental_fetch_mode = fetch_mode != "full_fetch"
-        self.since_fetch_date = int(self._parse_date(date_from))
+        self.since_fetch_date: int = int(self._parse_date(date_from))
         self.state["last_run"] = self.since_fetch_date
 
         destination_settings = params.get(KEY_DESTINATION, {})
@@ -129,8 +130,6 @@ class Component(ComponentBase):
         for endpoint in endpoints_to_fetch:
             if endpoints_to_fetch[endpoint]:
                 self.endpoint_func_mapping[endpoint]()
-            else:
-                raise UserException(f"Endpoint : {endpoint} is not valid")
 
         for association in associations_to_fetch:
             object_from = association.get(KEY_ASSOCIATION_FROM_OBJECT)
@@ -182,7 +181,10 @@ class Component(ComponentBase):
         self.fetch_and_write_endpoint_with_custom_schema("form", self.client.get_forms)
 
     def get_email_events(self) -> None:
-        self.fetch_and_write_endpoint_with_custom_schema("email_event", self.client.get_email_events)
+        additional_props = self.configuration.parameters.get(KEY_ADDITIONAL_PROPERTIES, {})
+        email_events = additional_props.get(KEY_EMAIL_EVENT_TYPES, [])
+        self.fetch_and_write_endpoint_with_custom_schema("email_event", self.client.get_email_events,
+                                                         email_events=email_events)
 
     def get_pipelines(self) -> None:
         pipeline_schema = self.get_table_schema_by_name("pipeline")
@@ -490,10 +492,9 @@ if __name__ == "__main__":
         comp = Component()
         # this triggers the run method by default and is controlled by the configuration.action parameter
         comp.execute_action()
-    except UserException as exc:
-        logging.exception(exc)
-        exit(1)
     except HubspotClientException as exc:
+        raise UserException(exc) from exc
+    except UserException as exc:
         logging.exception(exc)
         exit(1)
     except Exception as exc:

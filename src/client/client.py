@@ -7,7 +7,7 @@ import requests
 
 from keboola.http_client import HttpClient
 from hubspot import HubSpot
-from hubspot.crm import contacts, companies, deals, line_items, products, quotes, tickets, owners
+from hubspot.crm import contacts, companies, deals, line_items, products, quotes, tickets, owners, properties, pipelines
 from hubspot.crm.objects import notes, emails, meetings, calls, tasks
 from hubspot.crm.associations import BatchInputPublicObjectId
 from urllib3.util.retry import Retry as urlibRetry
@@ -49,11 +49,15 @@ class HubspotClient(HttpClient):
         super().__init__(BASE_URL, auth_header=auth_header, status_forcelist=(429, 500, 502, 504, 524))
 
     def get_crm_object_properties(self, object_type: str) -> List:
-        return self.client_v3.crm.properties.core_api.get_all(object_type=object_type).to_dict().get("results")
+        try:
+            return self.client_v3.crm.properties.core_api.get_all(object_type=object_type).to_dict().get("results")
+        except properties.exceptions.ApiException as exc:
+            self._raise_exception_from_status_code(exc.status, object_type, exc.body)
 
     def get_contacts(self, properties: List, incremental: bool = False, archived: bool = False,
                      since_date: str = None, since_property: str = "lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="contact",
                                        search_request_object=contacts.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.contacts.search_api.do_search,
                                        basic_api=self.client_v3.crm.contacts.basic_api,
@@ -66,6 +70,7 @@ class HubspotClient(HttpClient):
     def get_companies(self, properties: List, incremental: bool = False, archived: bool = False,
                       since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="company",
                                        search_request_object=companies.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.companies.search_api.do_search,
                                        basic_api=self.client_v3.crm.companies.basic_api,
@@ -78,6 +83,7 @@ class HubspotClient(HttpClient):
     def get_deals(self, properties: List, incremental: bool = False, archived: bool = False,
                   since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="deal",
                                        search_request_object=deals.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.deals.search_api.do_search,
                                        basic_api=self.client_v3.crm.deals.basic_api,
@@ -90,6 +96,7 @@ class HubspotClient(HttpClient):
     def get_line_items(self, properties: List, incremental: bool = False, archived: bool = False,
                        since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="line_item",
                                        search_request_object=line_items.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.line_items.search_api.do_search,
                                        basic_api=self.client_v3.crm.line_items.basic_api,
@@ -102,6 +109,7 @@ class HubspotClient(HttpClient):
     def get_products(self, properties: List, incremental: bool = False, archived: bool = False,
                      since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="product",
                                        search_request_object=products.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.products.search_api.do_search,
                                        basic_api=self.client_v3.crm.products.basic_api,
@@ -114,6 +122,7 @@ class HubspotClient(HttpClient):
     def get_quotes(self, properties: List, incremental: bool = False, archived: bool = False,
                    since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="quote",
                                        search_request_object=quotes.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.quotes.search_api.do_search,
                                        basic_api=self.client_v3.crm.quotes.basic_api,
@@ -126,6 +135,7 @@ class HubspotClient(HttpClient):
     def get_tickets(self, properties: List, incremental: bool = False, archived: bool = False,
                     since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="ticket",
                                        search_request_object=tickets.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.quotes.search_api.do_search,
                                        basic_api=self.client_v3.crm.tickets.basic_api,
@@ -136,17 +146,24 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_owners(self) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.owners.owners_api, exception=owners.ApiException)
+        return self._paginate_v3_object(self.client_v3.crm.owners.owners_api, "owner", exception=owners.ApiException)
 
     def get_deal_pipelines(self) -> List:
-        return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="deals").to_dict().get("results")
+        try:
+            return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="deals").to_dict().get("results")
+        except pipelines.exceptions.ApiException as exc:
+            self._raise_exception_from_status_code(exc.status, "pipelines", exc.body)
 
     def get_ticket_pipelines(self) -> List:
-        return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="tickets").to_dict().get("results")
+        try:
+            return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="tickets").to_dict().get("results")
+        except pipelines.exceptions.ApiException as exc:
+            self._raise_exception_from_status_code(exc.status, "pipelines", exc.body)
 
     def get_engagements_notes(self, properties: List, incremental: bool = False, archived: bool = False,
                               since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="note",
                                        search_request_object=notes.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.notes.search_api.do_search,
                                        basic_api=self.client_v3.crm.objects.notes.basic_api,
@@ -159,6 +176,7 @@ class HubspotClient(HttpClient):
     def get_engagements_calls(self, properties: List, incremental: bool = False, archived: bool = False,
                               since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="call",
                                        search_request_object=calls.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.calls.search_api.do_search,
                                        basic_api=self.client_v3.crm.objects.calls.basic_api,
@@ -171,6 +189,7 @@ class HubspotClient(HttpClient):
     def get_engagements_tasks(self, properties: List, incremental: bool = False, archived: bool = False,
                               since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="task",
                                        search_request_object=tasks.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.tasks.search_api.do_search,
                                        basic_api=self.client_v3.crm.objects.tasks.basic_api,
@@ -183,6 +202,7 @@ class HubspotClient(HttpClient):
     def get_engagements_meetings(self, properties: List, incremental: bool = False, archived: bool = False,
                                  since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="meeting",
                                        search_request_object=meetings.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.meetings.search_api.do_search,
                                        basic_api=self.client_v3.crm.objects.meetings.basic_api,
@@ -195,6 +215,7 @@ class HubspotClient(HttpClient):
     def get_engagements_emails(self, properties: List, incremental: bool = False, archived: bool = False,
                                since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
         return self._fetch_object_data(properties=properties,
+                                       endpoint_name="email",
                                        search_request_object=emails.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.emails.search_api.do_search,
                                        basic_api=self.client_v3.crm.objects.emails.basic_api,
@@ -224,8 +245,11 @@ class HubspotClient(HttpClient):
         parameters = {"updated__gte": updated_since} if updated_since else {}
         yield from self._get_paged_result_pages(ENDPOINT_EMAIL_STATISTICS, parameters, 'objects')
 
-    def get_email_events(self) -> Generator:
-        for event in EVENT_TYPES:
+    def get_email_events(self, email_events: List) -> Generator:
+        if not email_events:
+            email_events = EVENT_TYPES
+        logging.info(f"Fetching email Events for events : {email_events}")
+        for event in email_events:
             yield from self._get_paged_result_pages(ENDPOINT_EMAIL_EVENTS, {"eventType": event}, 'events')
 
     def get_forms(self) -> Generator:
@@ -249,8 +273,9 @@ class HubspotClient(HttpClient):
         for i in range(0, len(list_to_divide), list_len):
             yield list_to_divide[i:i + list_len]
 
-    def _fetch_object_data(self, properties: List, exception, basic_api, search_api, search_request_object,
-                           since_date: str, since_property: str, incremental: bool = False, archived: bool = False):
+    def _fetch_object_data(self, properties: List, endpoint_name: str, exception, basic_api, search_api,
+                           search_request_object, since_date: str, since_property: str, incremental: bool = False,
+                           archived: bool = False):
         if incremental:
             filter_groups = [{"filters": [{"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
             sorts = [{"propertyName": since_property, "direction": "DESCENDING"}]
@@ -260,29 +285,30 @@ class HubspotClient(HttpClient):
                                                    limit=BATCH_LIMIT,
                                                    after=0)
             return self._paginate_v3_object_search(search_api,
+                                                   endpoint_name,
                                                    search_request=search_request,
                                                    exception=exception)
         elif not incremental:
             return self._paginate_v3_object(basic_api,
+                                            endpoint_name,
                                             exception=exception,
                                             properties=properties,
                                             archived=archived)
 
-    def _paginate_v3_object(self, api_object, exception, **kwargs) -> Generator:
+    def _paginate_v3_object(self, api_object, endpoint_name, exception, **kwargs) -> Generator:
         after = None
         while True:
-            page = self._get_page_result(api_object, after, exception, **kwargs)
+            page = self._get_page_result(api_object, endpoint_name, after, exception, **kwargs)
             yield page.results
             if page.paging is None:
                 break
             after = page.paging.next.after
 
-    @staticmethod
-    def _get_page_result(api_object, after, exception, **kwargs):
+    def _get_page_result(self, api_object, endpoint_name, after, exception, **kwargs):
         try:
             return api_object.get_page(after=after, limit=PAGE_MAX_SIZE, **kwargs)
         except exception as exc:
-            raise HubspotClientException(exc) from exc
+            self._raise_exception_from_status_code(exc.status, endpoint_name, exc.body)
 
     def _get_paged_result_pages(self, endpoint: str, parameters: Dict, res_obj_name: str, offset: str = None,
                                 limit: int = DEFAULT_V1_LIMIT) -> Generator:
@@ -312,8 +338,20 @@ class HubspotClient(HttpClient):
 
     def _check_http_result(self, response: requests.Response, endpoint: str) -> None:
         reason = self._decode_response_reason(response.reason)
-        if 400 <= response.status_code < 600:
-            raise HubspotClientException(f'Request to {endpoint} failed {response.status_code} Error : {reason}')
+        self._raise_exception_from_status_code(response.status_code, endpoint, reason)
+
+    @staticmethod
+    def _raise_exception_from_status_code(status_code: int, endpoint: str, reason: str = ""):
+        if status_code == 401:
+            raise HubspotClientException(f'Unauthorized request, please make sure your credentials are valid. '
+                                         f'\n {reason}')
+        if status_code == 403:
+            raise HubspotClientException(f'Unauthorized request, please make sure your credentials contain the correct '
+                                         f'scopes. The request failed during endpoint "{endpoint}", '
+                                         f'make sure you have the read access scope for this endpoint. '
+                                         f'\n {reason}')
+        elif 400 <= status_code < 600:
+            raise HubspotClientException(f'Request to "{endpoint}" failed {status_code} Error : {reason}')
 
     @staticmethod
     def _decode_response_reason(reason: str) -> str:
@@ -369,17 +407,16 @@ class HubspotClient(HttpClient):
 
         return response, parameters, has_more
 
-    def _paginate_v3_object_search(self, search_callable, search_request, exception):
+    def _paginate_v3_object_search(self, search_callable, endpoint_name, search_request, exception):
         while True:
-            page = self._get_search_result(search_callable, search_request, exception)
+            page = self._get_search_result(search_callable, endpoint_name, search_request, exception)
             yield page.results
             if page.paging is None:
                 break
             search_request.after = page.paging.next.after
 
-    @staticmethod
-    def _get_search_result(search_callable, search_request, exception):
+    def _get_search_result(self, search_callable, endpoint_name, search_request, exception):
         try:
             return search_callable(public_object_search_request=search_request)
         except exception as exc:
-            raise HubspotClientException(exc) from exc
+            self._raise_exception_from_status_code(exc.status, endpoint_name, exc.body)
