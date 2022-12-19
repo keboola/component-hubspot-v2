@@ -117,7 +117,7 @@ class Component(ComponentBase):
         self.fetch_archived_objects = fetch_settings.get(KEY_ARCHIVED, False)
         self.incremental_fetch_mode = fetch_mode != "full_fetch"
         self.since_fetch_date: int = int(self._parse_date(date_from))
-        self.state["last_run"] = self.since_fetch_date
+        self.state["last_run"] = self._parse_date("now")
 
         destination_settings = params.get(KEY_DESTINATION, {})
         load_mode = destination_settings.get(KEY_LOAD_MODE, DEFAULT_LOAD_MODE)
@@ -423,7 +423,6 @@ class Component(ComponentBase):
         except (AttributeError, TypeError) as err:
             raise UserException(f"Failed to parse date {date_to_parse}, make sure the date is either in YYYY-MM-DD "
                                 f"format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc.") from err
-        self.state["last_run"] = parsed_timestamp
         return parsed_timestamp
 
     def _normalize_column_names(self, column_names: List, table_definition: TableDefinition) -> TableDefinition:
