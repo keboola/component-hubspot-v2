@@ -13,7 +13,7 @@
     "endpoints": {
       "type": "object",
       "title": "Endpoints",
-      "format": "grid",
+      "format": "table",
       "propertyOrder": 10,
       "properties": {
         "campaign": {
