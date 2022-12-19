@@ -232,9 +232,11 @@ class Component(ComponentBase):
         self.state["pipeline_stage"] = copy.deepcopy(pipeline_stage_writer.fieldnames)
 
         pipeline_table.columns = pipeline_writer.fieldnames
+        table_definition = self._remove_saved_metadata(pipeline_table, "pipeline")
         self.write_manifest(pipeline_table)
 
         pipeline_stage_table.columns = pipeline_stage_writer.fieldnames
+        pipeline_stage_table = self._remove_saved_metadata(pipeline_stage_table, "pipeline_stage")
         self.write_manifest(pipeline_stage_table)
 
     def get_owners(self) -> None:
@@ -249,6 +251,7 @@ class Component(ComponentBase):
         writer.close()
         self.state["owner"] = copy.deepcopy(writer.fieldnames)
         table_definition.columns = writer.fieldnames
+        table_definition = self._remove_saved_metadata(table_definition, "owner")
         self.write_manifest(table_definition)
 
     def get_tickets(self) -> None:
@@ -321,7 +324,6 @@ class Component(ComponentBase):
         writer.close()
         self.state[object_name] = copy.deepcopy(writer.fieldnames)
         table_definition = self._normalize_column_names(writer.fieldnames, table_definition)
-        table_definition = self._remove_saved_metadata(table_definition, object_name)
         self.write_manifest(table_definition)
 
     def get_deduplicated_list_of_columns(self, object_name: str, table_schema: TableSchema) -> List:
@@ -353,6 +355,7 @@ class Component(ComponentBase):
         table.columns = writer.fieldnames
         table = self._update_column_names(schema_name, copy.deepcopy(writer.fieldnames), table)
         table = self._normalize_column_names(table.columns, table)
+        table = self._remove_saved_metadata(table, schema_name)
         self.write_manifest(table)
 
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
@@ -423,7 +426,9 @@ class Component(ComponentBase):
     def _parse_date(self, date_to_parse: str) -> int:
         if date_to_parse.lower() in {"last", "lastrun", "last run"}:
             state = self.get_state_file()
-            return int(state.get("last_run", int(dateparser.parse(DEFAULT_DATE_FROM).timestamp() * 1000)))
+            # remove 1 hour / 3600000ms so there is no issue if data is being downloaded at the same time an object is
+            # being inserted/ being updated
+            return int(state.get("last_run", int(dateparser.parse(DEFAULT_DATE_FROM).timestamp() * 1000))) - 3600000
         try:
             parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp() * 1000)
         except (AttributeError, TypeError) as err:
