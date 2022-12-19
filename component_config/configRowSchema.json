@@ -13,122 +13,179 @@
     "endpoints": {
       "type": "object",
       "title": "Endpoints",
-      "format": "table",
+      "format": "grid-strict",
       "propertyOrder": 10,
       "properties": {
         "campaign": {
           "title": "Campaign",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "contact": {
           "title": "Contact",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "company": {
           "title": "Company",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "deal": {
           "title": "Deal",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "deal_line_item": {
           "title": "Deal line item",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "quote": {
           "title": "Quote",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "product": {
           "title": "Product",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "owner": {
           "title": "Owner",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "ticket": {
           "title": "Ticket",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "contact_list": {
           "title": "Contact list",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "email_event": {
           "title": "Email event",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "form": {
           "title": "Form",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "pipeline": {
           "title": "Pipeline",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "note": {
           "title": "Note",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "call": {
           "title": "Call",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "task": {
           "title": "Task",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "meeting": {
           "title": "Meeting",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "email": {
           "title": "Email",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         },
         "email_statistic": {
           "title": "Email statistic",
           "format": "checkbox",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "options": {
+            "grid_columns": 3
+          }
         }
       }
     },
