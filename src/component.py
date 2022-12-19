@@ -129,12 +129,18 @@ class Component(ComponentBase):
 
         for endpoint in endpoints_to_fetch:
             if endpoints_to_fetch[endpoint]:
-                self.endpoint_func_mapping[endpoint]()
+                try:
+                    self.endpoint_func_mapping[endpoint]()
+                except HubspotClientException as e:
+                    raise UserException(e) from e
 
         for association in associations_to_fetch:
             object_from = association.get(KEY_ASSOCIATION_FROM_OBJECT)
             object_to = association.get(KEY_ASSOCIATION_TO_OBJECT)
-            self.fetch_associations(object_from, object_to)
+            try:
+                self.fetch_associations(object_from, object_to)
+            except HubspotClientException as e:
+                raise UserException(e) from e
 
         self.write_state_file(self.state)
 
@@ -500,8 +506,6 @@ if __name__ == "__main__":
         comp = Component()
         # this triggers the run method by default and is controlled by the configuration.action parameter
         comp.execute_action()
-    except HubspotClientException as exc:
-        raise UserException(exc) from exc
     except UserException as exc:
         logging.exception(exc)
         exit(1)
