@@ -213,109 +213,13 @@
           },
           "default": "base"
         },
-        "call_properties": {
-          "type": "string",
-          "title": "Call - Additional Properties",
-          "format": "textarea",
-          "default": "hs_call_title, hs_call_status, hs_createdate, hs_lastmodifieddate, hs_object_id, hs_body_preview, hs_created_by, hs_created_by_user_id, hs_engagement_source, hubspot_owner_idm, hs_user_ids_of_all_owners",
-          "options": {
-            "input_height": "100px",
-            "dependencies": {
-              "object_properties": "custom",
-              "call_hidden": "true"
-            }
-          },
-          "description": "Comma separated list of call properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 20
-        },
-        "deal_properties": {
-          "type": "string",
-          "title": "Deal - Additional Properties",
-          "format": "textarea",
-          "default": "point_of_contact, product_of_interest, dealname, amount, dealstage, pipeline, closedate, hs_lastmodifieddate,hs_createdate, createdate, hs_deal_stage_probability, hs_deal_stage_probability_shadow, hs_object_id, amount_in_home_currency, days_to_close, hs_exchange_rate, hs_forecast_amount, hs_forecast_probability, hs_is_closed, hs_is_closed_won, hs_is_deal_split, hs_mrr, hs_projected_amount, hs_projected_amount_in_home_currency",
-          "options": {
-            "input_height": "100px",
-            "dependencies": {
-              "object_properties": "custom",
-              "deal_hidden": "true"
-            }
-          },
-          "description": "Comma separated list of Deal properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 30
-        },
-        "email_properties": {
-          "type": "string",
-          "title": "Email - Additional Properties",
-          "format": "textarea",
-          "default": "hubspot_owner_id, hubspot_team_id, hubspot_owner_assigneddate, hs_created_by, hs_createdate, hs_email_bcc_email, hs_email_bcc_firstname, hs_email_bcc_lastname, hs_email_cc_email, hs_email_cc_firstname, hs_email_cc_lastname, hs_email_from_email, hs_email_from_firstname, hs_email_from_lastname, hs_email_headers",
-          "options": {
-            "input_height": "100px",
-            "dependencies": {
-              "object_properties": "custom",
-              "email_hidden": "true"
-            }
-          },
-          "description": "Comma separated list of email properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 40
-        },
-        "company_properties": {
-          "type": "string",
-          "title": "Company - Additional Properties",
-          "format": "textarea",
-          "default": "about_us, name, phone, facebook_company_page, city, country, website, industry, annualrevenue, linkedin_company_page, hs_lastmodifieddate, hubspot_owner_id, notes_last_updated, description, createdate, numberofemployees, hs_lead_status, founded_year, twitterhandle, linkedinbio",
-          "options": {
-            "input_height": "100px",
-            "dependencies": {
-              "object_properties": "custom",
-              "company_hidden": "true"
-            }
-          },
-          "description": "Comma separated list of Company properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 50
-        },
-        "contact_properties": {
-          "type": "string",
-          "title": "Contact - Additional Properties",
-          "format": "textarea",
-          "default": "hs_facebookid, hs_linkedinid, ip_city, ip_country, ip_country_code, newsletter_opt_in, firstname, linkedin_profile, lastname, email, mobilephone, phone, city, country, region, jobtitle, company, website, numemployees, industry, associatedcompanyid, hs_lead_status, lastmodifieddate, source, hs_email_optout, twitterhandle, lead_type, hubspot_owner_id, notes_last_updated, hs_analytics_source, opt_in, createdate, hs_twitterid, lifecyclestage",
-          "options": {
-            "input_height": "100px",
-            "dependencies": {
-              "object_properties": "custom",
-              "contact_hidden": "true"
-            }
-          },
-          "description": "Comma separated list of contact properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 60
-        },
-        "meeting_properties": {
-          "type": "string",
-          "title": "Meetings - Additional Properties",
-          "format": "textarea",
-          "default": "hubspot_owner_id, hs_user_ids_of_all_owners, hs_meeting_start_time,hs_meeting_end_time, hs_body_preview_is_truncated, hs_created_by, hs_created_by_user_id, hs_engagement_source, hs_createdate, hs_lastmodifieddate, hs_object_id, hs_timestamp",
-          "options": {
-            "input_height": "100px",
-            "dependencies": {
-              "object_properties": "custom",
-              "meeting_hidden": "true"
-            }
-          },
-          "description": "Comma separated list of meeting properties. The values must match valid company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 70
-        },
         "email_event_types": {
           "type": "array",
           "title": "Email Event Types",
           "format": "checkbox",
           "uniqueItems": true,
           "description": "Select which event types you want to fetch data for",
-          "propertyOrder": 80,
+          "propertyOrder": 15,
           "options": {
             "dependencies": {
               "email_event_hidden": "true"
@@ -356,6 +260,198 @@
             "BOUNCE",
             "SENT"
           ]
+        },
+        "contact_properties": {
+          "type": "string",
+          "title": "Contact - Additional Properties",
+          "format": "textarea",
+          "default": "hs_facebookid, hs_linkedinid, ip_city, ip_country, ip_country_code, newsletter_opt_in, firstname, linkedin_profile, lastname, email, mobilephone, phone, city, country, region, jobtitle, company, website, numemployees, industry, associatedcompanyid, hs_lead_status, lastmodifieddate, source, hs_email_optout, twitterhandle, lead_type, hubspot_owner_id, notes_last_updated, hs_analytics_source, opt_in, createdate, hs_twitterid, lifecyclestage",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "contact_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Contact properties. The values must match valid Contact properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 20
+        },
+        "company_properties": {
+          "type": "string",
+          "title": "Company - Additional Properties",
+          "format": "textarea",
+          "default": "about_us, name, phone, facebook_company_page, city, country, website, industry, annualrevenue, linkedin_company_page, hs_lastmodifieddate, hubspot_owner_id, notes_last_updated, description, createdate, numberofemployees, hs_lead_status, founded_year, twitterhandle, linkedinbio",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "company_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Company properties. The values must match valid Company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 30
+        },
+        "deal_properties": {
+          "type": "string",
+          "title": "Deal - Additional Properties",
+          "format": "textarea",
+          "default": "point_of_contact, product_of_interest, dealname, amount, dealstage, pipeline, closedate, hs_lastmodifieddate,hs_createdate, createdate, hs_deal_stage_probability, hs_deal_stage_probability_shadow, hs_object_id, amount_in_home_currency, days_to_close, hs_exchange_rate, hs_forecast_amount, hs_forecast_probability, hs_is_closed, hs_is_closed_won, hs_is_deal_split, hs_mrr, hs_projected_amount, hs_projected_amount_in_home_currency",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "deal_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Deal properties. The values must match valid Deal properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 40
+        },
+        "line_item_properties": {
+          "type": "string",
+          "title": "Line Item - Additional Properties",
+          "format": "textarea",
+          "default": "name, price, quantity, createdate, hs_object_id, amount, hs_acv, hs_arr, hs_created_by_user_id, hs_margin, hs_margin_acv, hs_margin_arr, hs_margin_mrr, hs_margin_tcv, hs_mrr, hs_position_on_quote, hs_pre_discount_amount, hs_total_discount, hs_updated_by_user_id",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "deal_line_item_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Line Item properties. The values must match valid Line Item properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 50
+        },
+        "product_properties": {
+          "type": "string",
+          "title": "Product - Additional Properties",
+          "format": "textarea",
+          "default": "amount, description, discount, hs_sku, hs_url, hubspot_owner_id, name, price, quantity, recurringbillingfrequency, tax",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "product_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Product properties. The values must match valid Product properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 60
+        },
+        "ticket_properties": {
+          "type": "string",
+          "title": "Ticket - Additional Properties",
+          "format": "textarea",
+          "default": "hs_object_id, hs_created_by_user_id, closed_date, created_by, createdate, hs_lastactivitydate, hs_pipeline, hs_resolution, hs_ticket_id, hs_ticket_priority",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "ticket_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Ticket properties. The values must match valid Ticket properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 70
+        },
+        "quote_properties": {
+          "type": "string",
+          "title": "Quote - Additional Properties",
+          "format": "textarea",
+          "default": "hs_quote_number, hs_object_id, hs_allowed_payment_methods, hs_collect_billing_address, hs_created_by_user_id, hs_language, hs_locale, hs_payment_status, hs_quote_total_preference, hs_template_type, hs_test_mode, hs_sender_firstname, hs_title, hs_expiration_date, hs_quote_amount, hs_status",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "quote_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Quote properties. The values must match valid Quote properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 80
+        },
+        "call_properties": {
+          "type": "string",
+          "title": "Call - Additional Properties",
+          "format": "textarea",
+          "default": "hs_call_title, hs_call_status, hs_createdate, hs_lastmodifieddate, hs_object_id, hs_body_preview, hs_created_by, hs_created_by_user_id, hs_engagement_source, hubspot_owner_idm, hs_user_ids_of_all_owners",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "call_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Call properties. The values must match valid Call properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 90
+        },
+        "email_properties": {
+          "type": "string",
+          "title": "Email - Additional Properties",
+          "format": "textarea",
+          "default": "hubspot_owner_id, hubspot_team_id, hubspot_owner_assigneddate, hs_created_by, hs_createdate, hs_email_bcc_email, hs_email_bcc_firstname, hs_email_bcc_lastname, hs_email_cc_email, hs_email_cc_firstname, hs_email_cc_lastname, hs_email_from_email, hs_email_from_firstname, hs_email_from_lastname, hs_email_headers",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "email_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Email properties. The values must match valid Email properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 100
+        },
+        "meeting_properties": {
+          "type": "string",
+          "title": "Meetings - Additional Properties",
+          "format": "textarea",
+          "default": "hubspot_owner_id, hs_user_ids_of_all_owners, hs_meeting_start_time,hs_meeting_end_time, hs_body_preview_is_truncated, hs_created_by, hs_created_by_user_id, hs_engagement_source, hs_createdate, hs_lastmodifieddate, hs_object_id, hs_timestamp",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "meeting_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Meetinf properties. The values must match valid Meeting properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 110
+        },
+        "note_properties": {
+          "type": "string",
+          "title": "Note - Additional Properties",
+          "format": "textarea",
+          "default": "hs_object_id, hs_body_preview, hs_engagement_source, hs_created_by_user_id, hs_modified_by, hs_engagement_source_id, hs_user_ids_of_all_owners",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "note_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Note properties. The values must match valid Note properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 120
+        },
+        "task_properties": {
+          "type": "string",
+          "title": "Task - Additional Properties",
+          "format": "textarea",
+          "default": "hs_object_id, hs_task_subject, hs_task_type, hs_body_preview, hs_created_by_user_id, hs_engagement_source, hs_task_for_object_type, hs_task_last_contact_outreach, hs_task_last_sales_activity_timestamp, hs_task_priority, hs_task_send_default_reminder, hs_task_status",
+          "options": {
+            "input_height": "100px",
+            "dependencies": {
+              "object_properties": "custom",
+              "task_hidden": "true"
+            }
+          },
+          "description": "Comma separated list of Task properties. The values must match valid Task properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+          "uniqueItems": true,
+          "propertyOrder": 130
         },
         "campaign_hidden": {
           "type": "string",

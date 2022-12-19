@@ -268,7 +268,7 @@ class Component(ComponentBase):
 
         table_definition.columns = self.get_deduplicated_list_of_columns(object_name, table_schema)
 
-        extra_arguments = {"properties": table_definition.columns, "archived": self.fetch_archived_objects,
+        extra_arguments = {"object_properties": table_definition.columns, "archived": self.fetch_archived_objects,
                            "incremental": self.incremental_fetch_mode, "since_date": self.since_fetch_date}
 
         self.fetch_and_write_to_table(object_name, table_definition, data_generator, extra_arguments)
