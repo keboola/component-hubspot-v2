@@ -232,7 +232,7 @@ class Component(ComponentBase):
         self.state["pipeline_stage"] = copy.deepcopy(pipeline_stage_writer.fieldnames)
 
         pipeline_table.columns = pipeline_writer.fieldnames
-        table_definition = self._remove_saved_metadata(pipeline_table, "pipeline")
+        pipeline_table = self._remove_saved_metadata(pipeline_table, "pipeline")
         self.write_manifest(pipeline_table)
 
         pipeline_stage_table.columns = pipeline_stage_writer.fieldnames
