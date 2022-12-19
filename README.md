@@ -48,87 +48,29 @@ Additional Endpoint Options
 ===================
 
 ## Additional properties
+Additional properties are available for fetching for the following CRM objects :
 
-Endpoint Definitions and their Outputs
-======
+* Companies
+* Contacts
+* Deals
+* Deal Line Items
+* Calls
+* Emails
+* Notes
+* Meetings
+* Tasks
+* Products
+* Quotes
+* Tickets
 
-## Campaigns
+You can select which properties you want to fetch for each of the above CRM object using the **Property Fetch Mode**
+by selecting, **all**, **base**, or **custom**. If you select **all**, then all available properties for each object will be downloaded. 
+If you select **base**, then only the base properties are downloaded. 
+If you select **custom**, then you can specify a string of a comma separated list of properties you wish to download for each object using the "{{object_name}}_properties" input.
 
-The Campaign data is saved into the **campaign.csv** table
+## Email event types
 
-## Companies
-
-The Companies data is saved into the **company.csv** table
-
-## Contacts
-
-Contacts store information about individuals, their names, emails, addresses, etc.
-
-The Contacts data is saved into the **contact.csv** table
-
-## Contact Lists
-
-The Contact Lists data is saved into the **contact_list.csv** table
-
-## Deals
-
-The Deals data is saved into the **deal.csv** table
-
-## Deal Line Items
-
-The Deal Line Items data is saved into the **line_item.csv** table
-
-## Email Events
-
-The Email Events data is saved into the **email_event.csv** table
-
-## Marketing Email Statistics
-
-The Marketing Email Statistics data is saved into the **_email_statistic.csv** table
-
-## Forms
-
-The Forms data is saved into the **form.csv** table
-
-## Engagements - Calls
-
-The Calls data is saved into the **call.csv** table
-
-## Engagements - Emails
-
-The Emails data is saved into the **email.csv** table
-
-## Engagements - Notes
-
-The Notes data is saved into the **note.csv** table
-
-## Engagements - Meetings
-
-The Meetings data is saved into the **meetings.csv** table
-
-## Engagements - Tasks
-
-The Tasks data is saved into the **task.csv** table
-
-## Owners
-
-The Owners data is saved into the **owner.csv** table
-
-## Pipelines
-
-The Pipelines data is saved into the **pipeline.csv** and **pipeline_stage.csv** table
-
-## Products
-
-The Products data is saved into the **product.csv** table
-
-## Quotes
-
-The Quotes data is saved into the **quote.csv** table
-
-## Tickets
-
-The Tickets data is saved into the **ticket.csv** table
+When downloading email events you can specify a comma separated list of the following event types : ["DEFERRED","CLICK","DROPPED","DELIVERED","PROCESSED","OPEN","BOUNCE","SENT"]
 
 
 Configuration
@@ -140,7 +82,10 @@ Param 1
 Param 2
 -------
 
-## Output name
+Output
+=============
+
+The component outputs each of the crm objects into their separate table. E.g. Contact data is saved into contact.csv
 
 Development
 -----------
