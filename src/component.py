@@ -315,6 +315,7 @@ class Component(ComponentBase):
         writer.close()
         self.state[object_name] = copy.deepcopy(writer.fieldnames)
         table_definition = self._normalize_column_names(writer.fieldnames, table_definition)
+        table_definition = self._remove_saved_metadata(table_definition, object_name)
         self.write_manifest(table_definition)
 
     def get_deduplicated_list_of_columns(self, object_name: str, table_schema: TableSchema) -> List:
@@ -485,6 +486,14 @@ class Component(ComponentBase):
                 raise UserException(f"All objects for which associations should be fetched must be present "
                                     f"in the selected endpoints to be downloaded. The object '{endpoint}' "
                                     f"is not specified in the objects to fetch : '{endpoints_to_fetch}.")
+
+    def _remove_saved_metadata(self, table_definition, table_name):
+        new_metadata = {}
+        for col_name in table_definition.table_metadata.column_metadata:
+            if col_name not in self.state.get(table_name, []):
+                new_metadata[col_name] = table_definition.table_metadata.column_metadata[col_name]
+        table_definition.table_metadata.column_metadata = new_metadata
+        return table_definition
 
 
 if __name__ == "__main__":
