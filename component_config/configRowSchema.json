@@ -213,9 +213,9 @@
           },
           "default": "base"
         },
-        "fetch_property_versions": {
+        "fetch_property_history": {
           "type": "boolean",
-          "title": "Fetch Property Versions",
+          "title": "Fetch Property History",
           "format": "checkbox",
           "default": true,
           "options": {
@@ -223,7 +223,7 @@
               "object_properties": "custom"
             }
           },
-          "description": "If set, property versions of all properties will be fetched",
+          "description": "If set, property histories of all properties will be fetched",
           "propertyOrder": 10
         },
         "email_event_types": {
