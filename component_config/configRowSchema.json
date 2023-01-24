@@ -213,6 +213,19 @@
           },
           "default": "base"
         },
+        "fetch_property_versions": {
+          "type": "boolean",
+          "title": "Fetch Property Versions",
+          "format": "checkbox",
+          "default": true,
+          "options": {
+            "dependencies": {
+              "object_properties": "custom"
+            }
+          },
+          "description": "If set, property versions of all properties will be fetched",
+          "propertyOrder": 10
+        },
         "email_event_types": {
           "type": "array",
           "title": "Email Event Types",
@@ -739,7 +752,7 @@
               ]
             }
           },
-          "default" : "yesterday",
+          "default": "yesterday",
           "description": "Date in YYYY-MM-DD format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc. If left empty, all records are downloaded. You can also set this as `last run`, which will fetch data from the last run of the component; if no previous successful run exists, all data up to specified Date To will be downloaded.",
           "propertyOrder": 30
         },

@@ -22,6 +22,7 @@ ENDPOINT_EMAIL_EVENTS = 'email/public/v1/events'
 ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
 
 PAGE_MAX_SIZE = 100
+PAGE_WITH_HISTORY_MAX_SIZE = 50
 DEFAULT_V1_LIMIT = 1000
 BATCH_LIMIT = 100
 
@@ -55,8 +56,10 @@ class HubspotClient(HttpClient):
             self._raise_exception_from_status_code(exc.status, object_type, exc.body)
 
     def get_contacts(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                     since_date: str = None, since_property: str = "lastmodifieddate") -> Generator:
+                     since_date: str = None, since_property: str = "lastmodifieddate",
+                     properties_with_history: Optional[List] = None) -> Generator:
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="contact",
                                        search_request_object=contacts.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.contacts.search_api.do_search,
@@ -68,8 +71,10 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_companies(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                      since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                      since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                      properties_with_history: Optional[List] = None) -> Generator:
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="company",
                                        search_request_object=companies.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.companies.search_api.do_search,
@@ -81,8 +86,10 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_deals(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                  since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                  since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                  properties_with_history: Optional[List] = None) -> Generator:
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="deal",
                                        search_request_object=deals.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.deals.search_api.do_search,
@@ -94,8 +101,10 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_line_items(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                       since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                       since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                       properties_with_history: Optional[List] = None) -> Generator:
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="line_item",
                                        search_request_object=line_items.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.line_items.search_api.do_search,
@@ -107,8 +116,10 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_products(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                     since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                     since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                     properties_with_history: Optional[List] = None) -> Generator:
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="product",
                                        search_request_object=products.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.products.search_api.do_search,
@@ -120,11 +131,13 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_quotes(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                   since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                   since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                   properties_with_history: Optional[List] = None) -> Generator:
         if archived:
             logging.info("Cannot fetch archived objects of type quote, it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="quote",
                                        search_request_object=quotes.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.quotes.search_api.do_search,
@@ -136,8 +149,10 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_tickets(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                    since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                    since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                    properties_with_history: Optional[List] = None) -> Generator:
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="ticket",
                                        search_request_object=tickets.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.quotes.search_api.do_search,
@@ -164,11 +179,13 @@ class HubspotClient(HttpClient):
             self._raise_exception_from_status_code(exc.status, "pipelines", exc.body)
 
     def get_engagements_notes(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                              since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                              since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                              properties_with_history: Optional[List] = None) -> Generator:
         if archived:
             logging.info("Cannot fetch archived objects of type 'note', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="note",
                                        search_request_object=notes.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.notes.search_api.do_search,
@@ -180,11 +197,13 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_engagements_calls(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                              since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                              since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                              properties_with_history: Optional[List] = None) -> Generator:
         if archived:
             logging.info("Cannot fetch archived objects of type 'call', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="call",
                                        search_request_object=calls.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.calls.search_api.do_search,
@@ -196,11 +215,13 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_engagements_tasks(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                              since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                              since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                              properties_with_history: Optional[List] = None) -> Generator:
         if archived:
             logging.info("Cannot fetch archived objects of type 'tasks', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="task",
                                        search_request_object=tasks.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.tasks.search_api.do_search,
@@ -212,11 +233,13 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_engagements_meetings(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                                 since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                                 since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                                 properties_with_history: Optional[List] = None) -> Generator:
         if archived:
             logging.info("Cannot fetch archived objects of type 'meeting', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="meeting",
                                        search_request_object=meetings.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.meetings.search_api.do_search,
@@ -228,11 +251,13 @@ class HubspotClient(HttpClient):
                                        since_property=since_property)
 
     def get_engagements_emails(self, object_properties: List, incremental: bool = False, archived: bool = False,
-                               since_date: str = None, since_property: str = "hs_lastmodifieddate") -> Generator:
+                               since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                               properties_with_history: Optional[List] = None) -> Generator:
         if archived:
             logging.info("Cannot fetch archived objects of type 'email', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
                                        endpoint_name="email",
                                        search_request_object=emails.PublicObjectSearchRequest,
                                        search_api=self.client_v3.crm.objects.emails.search_api.do_search,
@@ -293,7 +318,7 @@ class HubspotClient(HttpClient):
 
     def _fetch_object_data(self, properties: List, endpoint_name: str, exception, basic_api, search_api,
                            search_request_object, since_date: str, since_property: str, incremental: bool = False,
-                           archived: bool = False):
+                           archived: bool = False, properties_with_history: Optional[List] = None):
         if incremental:
             filter_groups = [{"filters": [{"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
             sorts = [{"propertyName": since_property, "direction": "DESCENDING"}]
@@ -311,6 +336,7 @@ class HubspotClient(HttpClient):
                                             endpoint_name,
                                             exception=exception,
                                             properties=properties,
+                                            properties_with_history=properties_with_history,
                                             archived=archived)
 
     def _paginate_v3_object(self, api_object, endpoint_name, exception, **kwargs) -> Generator:
@@ -324,7 +350,7 @@ class HubspotClient(HttpClient):
 
     def _get_page_result(self, api_object, endpoint_name, after, exception, **kwargs):
         try:
-            return api_object.get_page(after=after, limit=PAGE_MAX_SIZE, **kwargs)
+            return api_object.get_page(after=after, limit=PAGE_WITH_HISTORY_MAX_SIZE, **kwargs)
         except exception as exc:
             self._raise_exception_from_status_code(exc.status, endpoint_name, exc.body)
 

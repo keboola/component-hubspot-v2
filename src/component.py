@@ -25,6 +25,7 @@ KEY_ENDPOINT = "endpoints"
 KEY_ADDITIONAL_PROPERTIES = "additional_properties"
 KEY_OBJECT_PROPERTIES = "object_properties"  # base, all, custom
 KEY_EMAIL_EVENT_TYPES = "email_event_types"
+KEY_PROPERTY_VERSIONS = "fetch_property_versions"
 
 KEY_ASSOCIATIONS = "associations"
 KEY_ASSOCIATION_FROM_OBJECT = "from_object"
@@ -89,6 +90,7 @@ class Component(ComponentBase):
 
         self.incremental = True
         self.fetch_archived_objects = False
+        self.fetch_property_versions = False
         self.since_fetch_date = ""
         self.incremental_fetch_mode = False
         self.object_properties_mode = None
@@ -109,6 +111,7 @@ class Component(ComponentBase):
         additional_properties = params.get(KEY_ADDITIONAL_PROPERTIES, [])
         object_properties_mode = additional_properties.get(KEY_OBJECT_PROPERTIES, DEFAULT_OBJECT_PROPERTIES)
         self.object_properties_mode = object_properties_mode
+        self.fetch_property_versions = additional_properties.get(KEY_PROPERTY_VERSIONS, False)
 
         fetch_settings = params.get(KEY_FETCH_SETTINGS, [])
         fetch_mode = fetch_settings.get(KEY_FETCH_MODE, DEFAULT_FETCH_MODE)
@@ -270,6 +273,9 @@ class Component(ComponentBase):
         extra_arguments = {"object_properties": table_definition.columns, "archived": self.fetch_archived_objects,
                            "incremental": self.incremental_fetch_mode, "since_date": self.since_fetch_date}
 
+        if self.fetch_property_versions:
+            extra_arguments["properties_with_history"] = table_definition.columns
+
         self.fetch_and_write_to_table(object_name, table_definition, data_generator, extra_arguments)
 
     def _generate_crm_object_fetching_message(self, object_name):
@@ -316,10 +322,12 @@ class Component(ComponentBase):
     def fetch_and_write_to_table(self, object_name: str, table_definition: TableDefinition, data_generator: Callable,
                                  data_generator_kwargs) -> None:
         writer = ElasticDictWriter(table_definition.full_path, table_definition.columns)
+
         for page in data_generator(**data_generator_kwargs):
             for item in page:
                 c = item.to_dict()
-                writer.writerow({"id": c["id"], **(c["properties"])})
+                property_history = self._process_property_history(c.get("properties_with_history", {}))
+                writer.writerow({"id": c["id"], **(c["properties"]), **property_history})
         writer.close()
         self.state[object_name] = copy.deepcopy(writer.fieldnames)
         table_definition = self._normalize_column_names(writer.fieldnames, table_definition)
@@ -503,6 +511,13 @@ class Component(ComponentBase):
                 new_metadata[col_name] = table_definition.table_metadata.column_metadata[col_name]
         table_definition.table_metadata.column_metadata = new_metadata
         return table_definition
+
+    @staticmethod
+    def _process_property_history(properties_with_history):
+        suffix = "_history"
+        if not properties_with_history:
+            properties_with_history = {}
+        return {str(key) + suffix: val for key, val in properties_with_history.items()}
 
 
 if __name__ == "__main__":
