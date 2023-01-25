@@ -326,8 +326,19 @@ class Component(ComponentBase):
         for page in data_generator(**data_generator_kwargs):
             for item in page:
                 c = item.to_dict()
-                property_history = self._process_property_history(c.get("properties_with_history", {}))
-                writer.writerow({"id": c["id"], **(c["properties"]), **property_history})
+
+                properties = {}
+                if "properties" in c:
+                    properties = c.pop("properties")
+
+                if "associations" in c:
+                    c.pop("associations")
+
+                property_history = {}
+                if "properties_with_history" in c:
+                    property_history = self._process_property_history(c.pop("properties_with_history"))
+
+                writer.writerow({**c, **properties, **property_history})
         writer.close()
         self.state[object_name] = copy.deepcopy(writer.fieldnames)
         table_definition = self._normalize_column_names(writer.fieldnames, table_definition)
