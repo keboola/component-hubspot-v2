@@ -53,7 +53,7 @@
           }
         },
         "deal_line_item": {
-          "title": "Deal line item",
+          "title": "Line item",
           "format": "checkbox",
           "type": "boolean",
           "default": true,

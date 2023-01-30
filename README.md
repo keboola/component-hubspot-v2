@@ -44,7 +44,7 @@ The following endpoints are downloadable via this component :
 * Contacts
 * Contact Lists
 * Deals
-* Deal Line Items
+* Line Items
 * Email Events
 * Marketing Email Statistics
 * Forms
@@ -72,7 +72,7 @@ Additional properties are available for fetching for the following CRM objects :
 * Companies
 * Contacts
 * Deals
-* Deal Line Items
+* Line Items
 * Calls
 * Emails
 * Notes
