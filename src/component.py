@@ -1,23 +1,22 @@
-import csv
-import logging
-import dateparser
-from os import path
-import json
 import copy
-import hashlib
-import warnings
+import csv
 import datetime
-
+import hashlib
+import json
+import logging
+import warnings
+from os import path
 from typing import Callable, List
 
+import dateparser
 from keboola.component.base import ComponentBase
-from keboola.csvwriter import ElasticDictWriter
-from keboola.component.exceptions import UserException
 from keboola.component.dao import SupportedDataTypes, TableDefinition
+from keboola.component.exceptions import UserException
 from keboola.component.table_schema import TableSchema, FieldSchema
+from keboola.csvwriter import ElasticDictWriter
 
-from json_parser import FlattenJsonParser
 from client import HubspotClient, HubspotClientException
+from json_parser import FlattenJsonParser
 
 KEY_ACCESS_TOKEN = "#private_app_token"
 
@@ -417,7 +416,7 @@ class Component(ComponentBase):
                             "phone_number": SupportedDataTypes.STRING,
                             "json": SupportedDataTypes.STRING}
         # TODO FIX JSON PARSING FOR CRM OBJECTS
-        return type_conversions[hubspot_type]
+        return type_conversions.get(hubspot_type, SupportedDataTypes.STRING)
 
     @staticmethod
     def _parse_properties(properties: str) -> List:
