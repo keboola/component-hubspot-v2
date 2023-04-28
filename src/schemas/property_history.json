@@ -1,0 +1,62 @@
+{
+  "name": "property_history",
+  "description": "",
+  "primary_keys": [
+    "hs_object_id",
+    "hs_object_property_name",
+    "hs_object",
+    "timestamp",
+    "value",
+    "source_label",
+    "source_id",
+    "updated_by_user_id",
+    "source_type"
+  ],
+  "fields": [
+    {
+      "name": "hs_object_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "hs_object_property_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "hs_object",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "timestamp",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "value",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "source_label",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "source_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "updated_by_user_id",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "source_type",
+      "description": "",
+      "base_type": "STRING"
+    }
+  ]
+}

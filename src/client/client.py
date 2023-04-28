@@ -1,15 +1,15 @@
-import logging
-
 import json
+import logging
 from json import JSONDecodeError
-from typing import Optional, Dict, Generator, List
-import requests
+from typing import Dict, Generator, Iterator, List, Optional
 
-from keboola.http_client import HttpClient
+import requests
 from hubspot import HubSpot
-from hubspot.crm import contacts, companies, deals, line_items, products, quotes, tickets, owners, properties, pipelines
-from hubspot.crm.objects import notes, emails, meetings, calls, tasks
+from hubspot.crm import (companies, contacts, deals, line_items, owners,
+                         pipelines, products, properties, quotes, tickets)
 from hubspot.crm.associations import BatchInputPublicObjectId
+from hubspot.crm.objects import calls, emails, meetings, notes, tasks
+from keboola.http_client import HttpClient
 from urllib3.util.retry import Retry as urlibRetry
 
 BASE_URL = "https://api.hubapi.com/"
@@ -298,7 +298,7 @@ class HubspotClient(HttpClient):
     def get_forms(self) -> Generator:
         yield from self._get_paged_result_pages_v3(ENDPOINT_FORMS, {})
 
-    def get_associations(self, object_id_generator: Generator, from_object_type: str, to_object_type: str) -> None:
+    def get_associations(self, object_id_generator: Iterator, from_object_type: str, to_object_type: str) -> Dict:
         batch_inputs = self._format_batch_inputs(object_id_generator)
         for input_chuck in self.divide_chunks(batch_inputs, BATCH_LIMIT):
             batch_input_chunk = BatchInputPublicObjectId(inputs=input_chuck)
