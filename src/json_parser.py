@@ -1,6 +1,7 @@
 class FlattenJsonParser:
-    def __init__(self, child_separator: str = '_'):
+    def __init__(self, child_separator: str = '_', max_parsing_depth=2):
         self.child_separator = child_separator
+        self.max_parsing_depth = max_parsing_depth
 
     def parse_data(self, data):
         for i, row in enumerate(data):
@@ -19,13 +20,14 @@ class FlattenJsonParser:
             return {}
         flattened_dict = {}
 
-        def _flatten(dict_object, name_with_parent=''):
-            if isinstance(dict_object, dict):
+        def _flatten(dict_object, name_with_parent='', current_depth=0):
+            if isinstance(dict_object, dict) and current_depth <= self.max_parsing_depth:
                 for key in dict_object:
                     new_parent_name = self._construct_key(name_with_parent, self.child_separator, key)
-                    _flatten(dict_object[key], name_with_parent=new_parent_name)
+                    new_depth = current_depth + 1
+                    _flatten(dict_object[key], name_with_parent=new_parent_name, current_depth=new_depth)
             else:
                 flattened_dict[name_with_parent] = dict_object
 
-        _flatten(nested_dict)
+        _flatten(nested_dict, current_depth=0)
         return flattened_dict

@@ -52,7 +52,6 @@ class Component(ComponentBase):
         }
         self.client: HubspotClient
         self._configuration: Configuration
-        self.since_fetch_date: int
         self.state: dict = {}
         self._table_handler_cache: dict = {}
 
@@ -62,14 +61,11 @@ class Component(ComponentBase):
 
         self.state = self.get_state_file()
         self.state["last_run"] = self._parse_date("now")
-        self.set_since_fetch_date()
 
         self._init_client()
 
-        endpoints = self._configuration.endpoints
-        for endpoint_name, fetch_endpoint in vars(endpoints).items():
-            if fetch_endpoint:
-                self.process_endpoint(endpoint_name)
+        for endpoint_name in self._configuration.endpoints.enabled:
+            self.process_endpoint(endpoint_name)
         self._close_table_handlers()
 
         for association in self._configuration.associations:
@@ -84,11 +80,13 @@ class Component(ComponentBase):
     def _init_client(self):
         self.client = HubspotClient(access_token=self._configuration.pswd_private_app_token)
 
-    def set_since_fetch_date(self):
+    @property
+    def since_fetch_date(self) -> int:
+        since_fetch_date: int = 0
         if self._configuration.fetch_settings.fetch_mode == FetchMode.INCREMENTAL_FETCH:
-            self.since_fetch_date: int = int(self._parse_date(self._configuration.fetch_settings.date_from))
-        else:
-            self.since_fetch_date: int = 0
+            since_fetch_date: int = int(self._parse_date(self._configuration.fetch_settings.date_from))
+
+        return since_fetch_date
 
     def process_endpoint(self, endpoint_name: str):
         try:
@@ -330,7 +328,6 @@ class Component(ComponentBase):
         self.state[table_handler_name] = final_field_names
 
         table_handler.swap_column_names_in_table_definition(COLUMN_NAME_SWAP.get(table_handler_name, {}))
-        table_handler.shorten_column_names_in_table_definition()
 
         prev_run_cols = self.state.get(table_handler_name, [])
         table_handler.redefine_table_column_metadata(prev_run_cols)

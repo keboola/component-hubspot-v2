@@ -68,6 +68,10 @@ class Endpoints(ConfigurationBase):
     email: bool = False
     email_statistic: bool = False
 
+    @property
+    def enabled(self):
+        return [endpoint_name for endpoint_name, endpoint_is_enabled in vars(self).items() if endpoint_is_enabled]
+
 
 class ObjectProperties(str, Enum):
     ALL = "all"

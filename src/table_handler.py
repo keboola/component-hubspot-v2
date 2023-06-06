@@ -1,5 +1,4 @@
 import copy
-import hashlib
 
 from keboola.component.dao import TableDefinition
 from keboola.csvwriter import ElasticDictWriter
@@ -9,28 +8,6 @@ class TableHandler:
     def __init__(self, table_definition: TableDefinition, writer: ElasticDictWriter):
         self.table_definition = table_definition
         self.writer = writer
-
-    def shorten_column_names_in_table_definition(self):
-        """
-        Function to make the columns conform to KBC, max length of column is 64.
-        """
-        columns = self.writer.fieldnames
-
-        key_map = {}
-        for i, column_name in enumerate(columns):
-            if len(column_name) >= 64:
-                hashed = self._hash_column(column_name)
-                key_map[column_name] = f"{column_name[:30]}_{hashed}"
-                columns[i] = f"{column_name[:30]}_{hashed}"
-        self.table_definition.columns = columns
-
-        column_metadata = self.table_definition.table_metadata.column_metadata
-        self.table_definition.table_metadata.column_metadata = {key_map.get(k, k): v for (k, v) in
-                                                                column_metadata.items()}
-
-    @staticmethod
-    def _hash_column(columns_name: str) -> str:
-        return hashlib.md5(columns_name.encode('utf-8')).hexdigest()
 
     def redefine_table_column_metadata(self, state_columns):
         """
