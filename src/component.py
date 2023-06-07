@@ -16,7 +16,7 @@ from keboola.csvwriter import ElasticDictWriter
 
 from client import HubspotClient, HubspotClientException
 from configuration import Configuration, FetchMode, ObjectProperties
-from json_parser import FlattenJsonParser
+from json_parser import FlattenJsonParser, DEFAULT_MAX_PARSE_DEPTH
 from table_handler import TableHandler
 
 DEFAULT_DATE_FROM = "1990-01-01"
@@ -87,6 +87,9 @@ class Component(ComponentBase):
             since_fetch_date: int = int(self._parse_date(self._configuration.fetch_settings.date_from))
 
         return since_fetch_date
+
+    def override_parser_depth(self):
+        return self._configuration.override_parser_depth or DEFAULT_MAX_PARSE_DEPTH
 
     def process_endpoint(self, endpoint_name: str):
         try:
@@ -169,7 +172,7 @@ class Component(ComponentBase):
         self._get_specific_pipeline(self.client.get_ticket_pipelines)
 
     def _get_specific_pipeline(self, pipeline_generator: Callable) -> None:
-        parser = FlattenJsonParser()
+        parser = FlattenJsonParser(max_parsing_depth=self.override_parser_depth)
         for ticket_pipeline in pipeline_generator():
             stages = ticket_pipeline.pop("stages")
             pipeline_id = ticket_pipeline.get("id")
@@ -284,7 +287,7 @@ class Component(ComponentBase):
 
         self._init_table_handler(schema_name, schema)
 
-        parser = FlattenJsonParser()
+        parser = FlattenJsonParser(max_parsing_depth=self.override_parser_depth())
 
         for page in data_generator(**kwargs):
             parsed_data = parser.parse_data(page)

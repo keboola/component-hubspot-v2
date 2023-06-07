@@ -2,7 +2,7 @@ import dataclasses
 import json
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 
 import dataconf
 
@@ -164,3 +164,4 @@ class Configuration(ConfigurationBase):
     associations: list[Association]
     fetch_settings: FetchSettings
     destination_settings: DestinationSettings
+    override_parser_depth: Optional[int] = None

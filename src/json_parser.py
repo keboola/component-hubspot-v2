@@ -1,3 +1,6 @@
+DEFAULT_MAX_PARSE_DEPTH = 2
+
+
 class FlattenJsonParser:
     """
             Parser for parsing nested dictionaries. Initialize the parser with optional parameters. And use
@@ -33,7 +36,7 @@ class FlattenJsonParser:
 
     """
 
-    def __init__(self, child_separator: str = '_', max_parsing_depth=2):
+    def __init__(self, child_separator: str = '_', max_parsing_depth=DEFAULT_MAX_PARSE_DEPTH):
         self.child_separator = child_separator
         self.max_parsing_depth = max_parsing_depth
 
