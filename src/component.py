@@ -88,6 +88,7 @@ class Component(ComponentBase):
 
         return since_fetch_date
 
+    @property
     def override_parser_depth(self):
         return self._configuration.override_parser_depth or DEFAULT_MAX_PARSE_DEPTH
 
@@ -287,7 +288,7 @@ class Component(ComponentBase):
 
         self._init_table_handler(schema_name, schema)
 
-        parser = FlattenJsonParser(max_parsing_depth=self.override_parser_depth())
+        parser = FlattenJsonParser(max_parsing_depth=self.override_parser_depth)
 
         for page in data_generator(**kwargs):
             parsed_data = parser.parse_data(page)
