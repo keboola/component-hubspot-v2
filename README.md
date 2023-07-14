@@ -92,6 +92,11 @@ If you select **custom**, then you can specify a string of a comma separated lis
 When downloading email events you can specify a comma separated list of the following event types : ["DEFERRED","CLICK","DROPPED","DELIVERED","PROCESSED","OPEN","BOUNCE","SENT"]
 
 
+## Known API limitations
+The CRM Search API has a limit of 10k records. If you encounter a 400 status code error during the incremental fetch, it means that more than 10k records have changed within the incremental time window.
+
+In such cases, you will need to set a small enough interval to catch up with the 10k changes.
+
 Configuration
 =============
 
