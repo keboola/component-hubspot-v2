@@ -697,7 +697,8 @@
               "call",
               "task",
               "meeting",
-              "email"
+              "email",
+              "line_item"
             ],
             "default": "meeting"
           }
