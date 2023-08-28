@@ -21,7 +21,7 @@ ENDPOINT_FORMS = "marketing/v3/forms/"
 ENDPOINT_EMAIL_EVENTS = 'email/public/v1/events'
 ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
 
-HUBSPOT_API_SEARCH_LIMIT=9999
+HUBSPOT_API_SEARCH_LIMIT = 9999
 
 PAGE_MAX_SIZE = 100
 PAGE_WITH_HISTORY_MAX_SIZE = 50
@@ -31,7 +31,8 @@ BATCH_LIMIT = 100
 MAX_RETRIES = 5
 MAX_TIMEOUT = 10
 DEFAULT_BACKOFF = 0.3
-EVENT_TYPES = ["DEFERRED", "CLICK", "DROPPED", "DELIVERED", "PROCESSED", "OPEN", "BOUNCE", "SENT"]
+EVENT_TYPES = ["DEFERRED", "CLICK", "DROPPED",
+               "DELIVERED", "PROCESSED", "OPEN", "BOUNCE", "SENT"]
 
 
 class HubspotClientException(Exception):
@@ -47,15 +48,18 @@ class HubspotClient(HttpClient):
             allowed_methods=frozenset({"HEAD", "GET", "PUT", "POST"}),
             status_forcelist=(429, 500, 502, 504),
         )
-        self.client_v3 = HubSpot(access_token=access_token, retry=retry_settings)
+        self.client_v3 = HubSpot(
+            access_token=access_token, retry=retry_settings)
         auth_header = {'Authorization': f'Bearer {access_token}'}
-        super().__init__(BASE_URL, auth_header=auth_header, status_forcelist=(429, 500, 502, 504, 524))
+        super().__init__(BASE_URL, auth_header=auth_header,
+                         status_forcelist=(429, 500, 502, 504, 524))
 
     def get_crm_object_properties(self, object_type: str) -> List:
         try:
             return self.client_v3.crm.properties.core_api.get_all(object_type=object_type).to_dict().get("results")
         except properties.exceptions.ApiException as exc:
-            self._raise_exception_from_status_code(exc.status, object_type, exc.body)
+            self._raise_exception_from_status_code(
+                exc.status, object_type, exc.body)
 
     def get_contacts(self, object_properties: List, incremental: bool = False, archived: bool = False,
                      since_date: str = None, since_property: str = "lastmodifieddate",
@@ -136,7 +140,8 @@ class HubspotClient(HttpClient):
                    since_date: str = None, since_property: str = "hs_lastmodifieddate",
                    properties_with_history: Optional[List] = None) -> Generator:
         if archived:
-            logging.info("Cannot fetch archived objects of type quote, it is not yet supported")
+            logging.info(
+                "Cannot fetch archived objects of type quote, it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
                                        properties_with_history=properties_with_history,
@@ -172,19 +177,22 @@ class HubspotClient(HttpClient):
         try:
             return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="deals").to_dict().get("results")
         except pipelines.exceptions.ApiException as exc:
-            self._raise_exception_from_status_code(exc.status, "pipelines", exc.body)
+            self._raise_exception_from_status_code(
+                exc.status, "pipelines", exc.body)
 
     def get_ticket_pipelines(self) -> List:
         try:
             return self.client_v3.crm.pipelines.pipelines_api.get_all(object_type="tickets").to_dict().get("results")
         except pipelines.exceptions.ApiException as exc:
-            self._raise_exception_from_status_code(exc.status, "pipelines", exc.body)
+            self._raise_exception_from_status_code(
+                exc.status, "pipelines", exc.body)
 
     def get_engagements_notes(self, object_properties: List, incremental: bool = False, archived: bool = False,
                               since_date: str = None, since_property: str = "hs_lastmodifieddate",
                               properties_with_history: Optional[List] = None) -> Generator:
         if archived:
-            logging.info("Cannot fetch archived objects of type 'note', it is not yet supported")
+            logging.info(
+                "Cannot fetch archived objects of type 'note', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
                                        properties_with_history=properties_with_history,
@@ -202,7 +210,8 @@ class HubspotClient(HttpClient):
                               since_date: str = None, since_property: str = "hs_lastmodifieddate",
                               properties_with_history: Optional[List] = None) -> Generator:
         if archived:
-            logging.info("Cannot fetch archived objects of type 'call', it is not yet supported")
+            logging.info(
+                "Cannot fetch archived objects of type 'call', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
                                        properties_with_history=properties_with_history,
@@ -220,7 +229,8 @@ class HubspotClient(HttpClient):
                               since_date: str = None, since_property: str = "hs_lastmodifieddate",
                               properties_with_history: Optional[List] = None) -> Generator:
         if archived:
-            logging.info("Cannot fetch archived objects of type 'tasks', it is not yet supported")
+            logging.info(
+                "Cannot fetch archived objects of type 'tasks', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
                                        properties_with_history=properties_with_history,
@@ -238,7 +248,8 @@ class HubspotClient(HttpClient):
                                  since_date: str = None, since_property: str = "hs_lastmodifieddate",
                                  properties_with_history: Optional[List] = None) -> Generator:
         if archived:
-            logging.info("Cannot fetch archived objects of type 'meeting', it is not yet supported")
+            logging.info(
+                "Cannot fetch archived objects of type 'meeting', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
                                        properties_with_history=properties_with_history,
@@ -256,7 +267,8 @@ class HubspotClient(HttpClient):
                                since_date: str = None, since_property: str = "hs_lastmodifieddate",
                                properties_with_history: Optional[List] = None) -> Generator:
         if archived:
-            logging.info("Cannot fetch archived objects of type 'email', it is not yet supported")
+            logging.info(
+                "Cannot fetch archived objects of type 'email', it is not yet supported")
             archived = False
         return self._fetch_object_data(properties=object_properties,
                                        properties_with_history=properties_with_history,
@@ -277,9 +289,11 @@ class HubspotClient(HttpClient):
 
     def get_campaign_details(self, campaign_id: str) -> Dict:
         try:
-            req = self.get_raw(f"{ENDPOINT_CAMPAIGNS}/{campaign_id}", timeout=MAX_TIMEOUT)
+            req = self.get_raw(
+                f"{ENDPOINT_CAMPAIGNS}/{campaign_id}", timeout=MAX_TIMEOUT)
         except ConnectionError as exc:
-            raise HubspotClientException(f"Connection to Hubspot failed due :{exc}") from exc
+            raise HubspotClientException(
+                f"Connection to Hubspot failed due :{exc}") from exc
         self._check_http_result(req, "campaigns")
         return req.json()
 
@@ -322,7 +336,8 @@ class HubspotClient(HttpClient):
                            search_request_object, since_date: str, since_property: str, incremental: bool = False,
                            archived: bool = False, properties_with_history: Optional[List] = None):
         if incremental:
-            filter_groups = [{"filters": [{"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
+            filter_groups = [{"filters": [
+                {"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
             sorts = [{"propertyName": since_property, "direction": "DESCENDING"}]
             search_request = search_request_object(filter_groups=filter_groups,
                                                    sorts=sorts,
@@ -344,7 +359,8 @@ class HubspotClient(HttpClient):
     def _paginate_v3_object(self, api_object, endpoint_name, exception, **kwargs) -> Generator:
         after = None
         while True:
-            page = self._get_page_result(api_object, endpoint_name, after, exception, **kwargs)
+            page = self._get_page_result(
+                api_object, endpoint_name, after, exception, **kwargs)
             yield page.results
             if page.paging is None:
                 break
@@ -354,7 +370,8 @@ class HubspotClient(HttpClient):
         try:
             return api_object.get_page(after=after, limit=PAGE_WITH_HISTORY_MAX_SIZE, **kwargs)
         except exception as exc:
-            self._raise_exception_from_status_code(exc.status, endpoint_name, exc.body)
+            self._raise_exception_from_status_code(
+                exc.status, endpoint_name, exc.body)
 
     def _get_paged_result_pages(self, endpoint: str, parameters: Dict, res_obj_name: str, offset: str = None,
                                 limit: int = DEFAULT_V1_LIMIT) -> Generator:
@@ -365,9 +382,11 @@ class HubspotClient(HttpClient):
             data = []
 
             try:
-                req = self.get_raw(endpoint, params=parameters, timeout=MAX_TIMEOUT)
+                req = self.get_raw(
+                    endpoint, params=parameters, timeout=MAX_TIMEOUT)
             except ConnectionError as exc:
-                raise HubspotClientException(f"Connection to Hubspot failed due :{exc}") from exc
+                raise HubspotClientException(
+                    f"Connection to Hubspot failed due :{exc}") from exc
             self._check_http_result(req, endpoint)
             req_response = self._parse_response_text(req, endpoint, parameters)
             if req_response.get('hasMore'):
@@ -384,7 +403,8 @@ class HubspotClient(HttpClient):
 
     def _check_http_result(self, response: requests.Response, endpoint: str) -> None:
         reason = self._decode_response_reason(response.reason)
-        self._raise_exception_from_status_code(response.status_code, endpoint, reason)
+        self._raise_exception_from_status_code(
+            response.status_code, endpoint, reason)
 
     @staticmethod
     def _raise_exception_from_status_code(status_code: int, endpoint: str, reason: str = ""):
@@ -397,7 +417,8 @@ class HubspotClient(HttpClient):
                                          f'make sure you have the read access scope for this endpoint. '
                                          f'\n {reason}')
         elif 400 <= status_code < 600:
-            raise HubspotClientException(f'Request to "{endpoint}" failed {status_code} Error : {reason}')
+            raise HubspotClientException(
+                f'Request to "{endpoint}" failed {status_code} Error : {reason}')
 
     @staticmethod
     def _decode_response_reason(reason: str) -> str:
@@ -426,10 +447,12 @@ class HubspotClient(HttpClient):
         has_more = True
         while has_more:
             parameters['limit'] = limit
-            req_response = self.get_raw(endpoint, params=parameters, timeout=MAX_TIMEOUT)
+            req_response = self.get_raw(
+                endpoint, params=parameters, timeout=MAX_TIMEOUT)
 
             self._check_http_result(req_response, endpoint)
-            response, parameters, has_more = self._process_v3_response(req_response, parameters)
+            response, parameters, has_more = self._process_v3_response(
+                req_response, parameters)
 
             results = []
             if response.get('results'):
@@ -455,9 +478,11 @@ class HubspotClient(HttpClient):
 
     def _paginate_v3_object_search(self, search_callable, endpoint_name, search_request, exception):
         while True:
-            page = self._get_search_result(search_callable, endpoint_name, search_request, exception)
-            if page.total>=HUBSPOT_API_SEARCH_LIMIT:
-                logging.warning(f"Cannot fetch incrementally objects {endpoint_name} with more than 10000 rows per interval!")
+            page = self._get_search_result(
+                search_callable, endpoint_name, search_request, exception)
+            if page.total >= HUBSPOT_API_SEARCH_LIMIT:
+                logging.warning(
+                    f"Cannot fetch incrementally objects {endpoint_name} with more than 10000 rows per interval!")
                 break
             yield page.results
             if page.paging is None:
@@ -468,4 +493,5 @@ class HubspotClient(HttpClient):
         try:
             return search_callable(public_object_search_request=search_request)
         except exception as exc:
-            self._raise_exception_from_status_code(exc.status, endpoint_name, exc.body)
+            self._raise_exception_from_status_code(
+                exc.status, endpoint_name, exc.body)
