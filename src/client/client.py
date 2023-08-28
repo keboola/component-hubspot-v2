@@ -21,6 +21,8 @@ ENDPOINT_FORMS = "marketing/v3/forms/"
 ENDPOINT_EMAIL_EVENTS = 'email/public/v1/events'
 ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
 
+HUBSPOT_API_SEARCH_LIMIT=9999
+
 PAGE_MAX_SIZE = 100
 PAGE_WITH_HISTORY_MAX_SIZE = 50
 DEFAULT_V1_LIMIT = 1000
@@ -155,7 +157,7 @@ class HubspotClient(HttpClient):
                                        properties_with_history=properties_with_history,
                                        endpoint_name="ticket",
                                        search_request_object=tickets.PublicObjectSearchRequest,
-                                       search_api=self.client_v3.crm.quotes.search_api.do_search,
+                                       search_api=self.client_v3.crm.tickets.search_api.do_search,
                                        basic_api=self.client_v3.crm.tickets.basic_api,
                                        exception=tickets.ApiException,
                                        incremental=incremental,
@@ -454,6 +456,9 @@ class HubspotClient(HttpClient):
     def _paginate_v3_object_search(self, search_callable, endpoint_name, search_request, exception):
         while True:
             page = self._get_search_result(search_callable, endpoint_name, search_request, exception)
+            if page.total>=HUBSPOT_API_SEARCH_LIMIT:
+                logging.warning(f"Cannot fetch incrementally objects {endpoint_name} with more than 10000 rows per interval!")
+                break
             yield page.results
             if page.paging is None:
                 break
