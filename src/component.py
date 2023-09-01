@@ -411,6 +411,7 @@ class Component(ComponentBase):
             # the "item1,item2" becomes ["item1,item2"] and this must be parsed
             if properties[0].count(',') >= 1:
                 return [p.strip() for p in properties[0].split(",")]
+            return properties[0]
         else:
             return properties
 
