@@ -417,15 +417,13 @@ class Component(ComponentBase):
     @staticmethod
     def _parse_properties(properties: Union[str, List]) -> List:
         if isinstance(properties, str):
-            return [p.strip() for p in properties.split(",")] if properties else []
-        elif len(properties) == 1:
             # in case the user saves the config when the comma separated list is still in the properties
             # the "item1,item2" becomes ["item1,item2"] and this must be parsed
-            if properties[0].count(',') >= 1:
-                return [p.strip() for p in properties[0].split(",")]
-            return properties[0]
-        else:
-            return properties
+            properties = properties.strip()
+            return properties.split(",") if properties else []
+        elif len(properties) == 1 and properties[0].count(',') >= 1:
+            return [p.strip() for p in properties[0].split(",")]
+        return properties
 
     @staticmethod
     def _timestamp_to_datetime(time_in_millis: int) -> str:
