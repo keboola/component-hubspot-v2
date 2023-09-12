@@ -74,17 +74,21 @@ class Component(ComponentBase):
         self.write_state_file(self.state)
 
     def _init_configuration(self):
-        self.validate_configuration_parameters(Configuration.get_dataclass_required_parameters())
-        self._configuration: Configuration = Configuration.load_from_dict(self.configuration.parameters)
+        self.validate_configuration_parameters(
+            Configuration.get_dataclass_required_parameters())
+        self._configuration: Configuration = Configuration.load_from_dict(
+            self.configuration.parameters)
 
     def _init_client(self):
-        self.client = HubspotClient(access_token=self._configuration.pswd_private_app_token)
+        self.client = HubspotClient(
+            access_token=self._configuration.pswd_private_app_token)
 
     @property
     def since_fetch_date(self) -> int:
         since_fetch_date: int = 0
         if self._configuration.fetch_settings.fetch_mode == FetchMode.INCREMENTAL_FETCH:
-            since_fetch_date: int = int(self._parse_date(self._configuration.fetch_settings.date_from))
+            since_fetch_date: int = int(self._parse_date(
+                self._configuration.fetch_settings.date_from))
 
         return since_fetch_date
 
@@ -117,31 +121,39 @@ class Component(ComponentBase):
         self._process_basic_crm_object("quote", self.client.get_quotes)
 
     def get_notes(self):
-        self._process_basic_crm_object("note", self.client.get_engagements_notes)
+        self._process_basic_crm_object(
+            "note", self.client.get_engagements_notes)
 
     def get_calls(self):
-        self._process_basic_crm_object("call", self.client.get_engagements_calls)
+        self._process_basic_crm_object(
+            "call", self.client.get_engagements_calls)
 
     def get_tasks(self):
-        self._process_basic_crm_object("task", self.client.get_engagements_tasks)
+        self._process_basic_crm_object(
+            "task", self.client.get_engagements_tasks)
 
     def get_meetings(self):
-        self._process_basic_crm_object("meeting", self.client.get_engagements_meetings)
+        self._process_basic_crm_object(
+            "meeting", self.client.get_engagements_meetings)
 
     def get_emails(self):
-        self._process_basic_crm_object("email", self.client.get_engagements_emails)
+        self._process_basic_crm_object(
+            "email", self.client.get_engagements_emails)
 
     def get_tickets(self) -> None:
         self._process_basic_crm_object("ticket", self.client.get_tickets)
 
     def get_campaigns(self) -> None:
-        self._process_endpoint_with_custom_schema("campaign", self.client.get_campaigns)
+        self._process_endpoint_with_custom_schema(
+            "campaign", self.client.get_campaigns)
 
     def get_contact_lists(self) -> None:
-        self._process_endpoint_with_custom_schema("contact_list", self.client.get_contact_lists)
+        self._process_endpoint_with_custom_schema(
+            "contact_list", self.client.get_contact_lists)
 
     def get_forms(self) -> None:
-        self._process_endpoint_with_custom_schema("form", self.client.get_forms)
+        self._process_endpoint_with_custom_schema(
+            "form", self.client.get_forms)
 
     def get_email_events(self) -> None:
         email_events = self._configuration.additional_properties.email_event_types
@@ -173,21 +185,25 @@ class Component(ComponentBase):
         self._get_specific_pipeline(self.client.get_ticket_pipelines)
 
     def _get_specific_pipeline(self, pipeline_generator: Callable) -> None:
-        parser = FlattenJsonParser(max_parsing_depth=self.override_parser_depth)
+        parser = FlattenJsonParser(
+            max_parsing_depth=self.override_parser_depth)
         for ticket_pipeline in pipeline_generator():
             stages = ticket_pipeline.pop("stages")
             pipeline_id = ticket_pipeline.get("id")
             self._table_handler_cache["pipeline"].writerow(ticket_pipeline)
             for stage in stages:
                 parsed_stage = parser.parse_row(stage)
-                self._table_handler_cache["pipeline_stage"].writerow({"pipeline_id": pipeline_id, **parsed_stage})
+                self._table_handler_cache["pipeline_stage"].writerow(
+                    {"pipeline_id": pipeline_id, **parsed_stage})
 
     def _process_basic_crm_object(self, object_name: str, data_generator: Callable) -> None:
         self._log_crm_object_fetching_message(object_name)
 
-        additional_property_columns = self._get_additional_properties_to_fetch(object_name)
+        additional_property_columns = self._get_additional_properties_to_fetch(
+            object_name)
 
-        table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=additional_property_columns)
+        table_schema = TableSchema(name=object_name, primary_keys=[
+                                   "id"], fields=additional_property_columns)
         self._init_table_handler(object_name, table_schema)
 
         incremental_fetch_mode = self._configuration.fetch_settings.fetch_mode != FetchMode.FULL_FETCH
@@ -200,16 +216,19 @@ class Component(ComponentBase):
                            "since_date": self.since_fetch_date}
 
         if self._configuration.additional_properties.fetch_property_history:
-            custom_props_str = getattr(self._configuration.additional_properties, f"{object_name}_property_history")
+            custom_props_str = getattr(
+                self._configuration.additional_properties, f"{object_name}_property_history")
             properties_with_history = self._parse_properties(custom_props_str)
             extra_arguments["properties_with_history"] = properties_with_history
             self._init_property_history_table_handler()
 
         # If fetching archived also fetch non-archived objects
         if archived:
-            self.fetch_and_write_to_table(object_name, data_generator, extra_arguments)
+            self.fetch_and_write_to_table(
+                object_name, data_generator, extra_arguments)
         extra_arguments["archived"] = False
-        self.fetch_and_write_to_table(object_name, data_generator, extra_arguments)
+        self.fetch_and_write_to_table(
+            object_name, data_generator, extra_arguments)
 
     def _log_crm_object_fetching_message(self, object_name):
         logging_message = f"Downloading data of object {object_name}. "
@@ -228,14 +247,17 @@ class Component(ComponentBase):
 
     def _get_additional_properties_to_fetch(self, object_name) -> List[FieldSchema]:
         if self._configuration.additional_properties.object_properties == ObjectProperties.ALL:
-            columns_with_properties = self.get_all_object_columns_with_properties(object_name)
+            columns_with_properties = self.get_all_object_columns_with_properties(
+                object_name)
         elif self._configuration.additional_properties.object_properties == ObjectProperties.CUSTOM:
-            columns_with_properties = self.get_specified_object_columns_with_properties(object_name)
+            columns_with_properties = self.get_specified_object_columns_with_properties(
+                object_name)
         else:
             columns_with_properties = []
 
         # It is necessary to add id column if not present as it is not part of the object properties
-        columns_with_properties = self._add_base_fields_to_field_schema_list(columns_with_properties)
+        columns_with_properties = self._add_base_fields_to_field_schema_list(
+            columns_with_properties)
         return columns_with_properties
 
     def get_all_object_columns_with_properties(self, object_name: str) -> List[FieldSchema]:
@@ -243,16 +265,19 @@ class Component(ComponentBase):
         return self._generate_field_schemas_from_properties(obj_prop)
 
     def get_specified_object_columns_with_properties(self, object_name: str) -> List[FieldSchema]:
-        custom_props_str = getattr(self._configuration.additional_properties, f"{object_name}_properties")
+        custom_props_str = getattr(
+            self._configuration.additional_properties, f"{object_name}_properties")
         custom_props = self._parse_properties(custom_props_str)
         obj_prop = self.client.get_crm_object_properties(object_name)
-        classified_object_properties = [obj_prop for obj_prop in obj_prop if obj_prop.get("name") in custom_props]
+        classified_object_properties = [
+            obj_prop for obj_prop in obj_prop if obj_prop.get("name") in custom_props]
         return self._generate_field_schemas_from_properties(classified_object_properties)
 
     def _generate_field_schemas_from_properties(self, column_properties: List) -> List[FieldSchema]:
         columns = []
         for column_property in column_properties:
-            keboola_type = self._convert_hubspot_type_to_keboola_base_type(column_property.get("type"))
+            keboola_type = self._convert_hubspot_type_to_keboola_base_type(
+                column_property.get("type"))
             columns.append(FieldSchema(name=column_property.get("name"),
                                        base_type=keboola_type,
                                        description=column_property.get("description")))
@@ -276,11 +301,14 @@ class Component(ComponentBase):
 
                 if properties_with_history and self._configuration.additional_properties.fetch_property_history:
                     property_history = self._process_property_history(object_name,
-                                                                      c.get("id"),
+                                                                      c.get(
+                                                                          "id"),
                                                                       properties_with_history)
-                    self._table_handler_cache["property_history"].writerows(property_history)
+                    self._table_handler_cache["property_history"].writerows(
+                        property_history)
 
-                self._table_handler_cache[object_name].writerow({**c, **properties})
+                self._table_handler_cache[object_name].writerow(
+                    {**c, **properties})
 
     def _process_endpoint_with_custom_schema(self, schema_name: str, data_generator: Callable, **kwargs) -> None:
         logging.info(f"Downloading all {schema_name.replace('_', ' ')}s")
@@ -288,7 +316,8 @@ class Component(ComponentBase):
 
         self._init_table_handler(schema_name, schema)
 
-        parser = FlattenJsonParser(max_parsing_depth=self.override_parser_depth)
+        parser = FlattenJsonParser(
+            max_parsing_depth=self.override_parser_depth)
 
         for page in data_generator(**kwargs):
             parsed_data = parser.parse_data(page)
@@ -302,15 +331,18 @@ class Component(ComponentBase):
         if handler_name not in self._table_handler_cache:
             incremental = self._configuration.destination_settings.load_mode != "full_load"
 
-            table_definition = self.create_out_table_definition_from_schema(table_schema, incremental=incremental)
+            table_definition = self.create_out_table_definition_from_schema(
+                table_schema, incremental=incremental)
 
             all_columns = self._add_columns_from_state_to_column_list(handler_name,
                                                                       copy.copy(table_definition.columns))
 
             table_definition.columns = all_columns
 
-            writer = ElasticDictWriter(table_definition.full_path, table_definition.columns)
-            self._table_handler_cache[handler_name] = TableHandler(table_definition, writer)
+            writer = ElasticDictWriter(
+                table_definition.full_path, table_definition.columns)
+            self._table_handler_cache[handler_name] = TableHandler(
+                table_definition, writer)
 
     def _add_columns_from_state_to_column_list(self, object_name: str, column_list) -> List:
         columns_in_state = self.state.get(object_name, [])
@@ -331,7 +363,8 @@ class Component(ComponentBase):
         table_handler.table_definition.columns = final_field_names
         self.state[table_handler_name] = final_field_names
 
-        table_handler.swap_column_names_in_table_definition(COLUMN_NAME_SWAP.get(table_handler_name, {}))
+        table_handler.swap_column_names_in_table_definition(
+            COLUMN_NAME_SWAP.get(table_handler_name, {}))
 
         prev_run_cols = self.state.get(table_handler_name, [])
         table_handler.redefine_table_column_metadata(prev_run_cols)
@@ -339,13 +372,16 @@ class Component(ComponentBase):
 
     def process_association(self, association):
         try:
-            self.fetch_associations(association.from_object.value, association.to_object.value)
+            self.fetch_associations(
+                association.from_object.value, association.to_object.value)
         except HubspotClientException as e:
             raise UserException(e) from e
 
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
-        logging.info(f"Fetching associations from {from_object_type} to {to_object_type}")
-        object_id_generator = self._get_object_ids(f"{from_object_type}.csv", id_name)
+        logging.info(
+            f"Fetching associations from {from_object_type} to {to_object_type}")
+        object_id_generator = self._get_object_ids(
+            f"{from_object_type}.csv", id_name)
         association_schema = self.get_table_schema_by_name("association")
         association_schema.name = f"{from_object_type}_to_{to_object_type}_association"
 
@@ -353,8 +389,10 @@ class Component(ComponentBase):
 
         for page in self.client.get_associations(object_id_generator, from_object_type=from_object_type,
                                                  to_object_type=to_object_type):
-            parsed_page = self._parse_association(page, from_object_type, to_object_type)
-            self._table_handler_cache[association_schema.name].writerows(parsed_page)
+            parsed_page = self._parse_association(
+                page, from_object_type, to_object_type)
+            self._table_handler_cache[association_schema.name].writerows(
+                parsed_page)
 
     def _get_object_ids(self, file_name: str, id_name: str):
         table_path = path.join(self.tables_out_path, file_name)
@@ -384,7 +422,8 @@ class Component(ComponentBase):
             # being inserted/ being updated
             return int(state.get("last_run", int(dateparser.parse(DEFAULT_DATE_FROM).timestamp() * 1000))) - 3600000
         try:
-            parsed_timestamp = int(dateparser.parse(date_to_parse).timestamp() * 1000)
+            parsed_timestamp = int(dateparser.parse(
+                date_to_parse).timestamp() * 1000)
         except (AttributeError, TypeError) as err:
             raise UserException(f"Failed to parse date {date_to_parse}, make sure the date is either in YYYY-MM-DD "
                                 f"format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc.") from err
@@ -395,7 +434,8 @@ class Component(ComponentBase):
                               vars(self._configuration.endpoints).items() if
                               fetch_endpoint]
 
-        endpoints_in_associations = [association.from_object for association in self._configuration.associations]
+        endpoints_in_associations = [
+            association.from_object for association in self._configuration.associations]
         for endpoint in endpoints_in_associations:
             if endpoint not in fetching_endpoints:
                 raise UserException(f"All objects for which associations should be fetched must be present "
@@ -458,9 +498,11 @@ class Component(ComponentBase):
 
     @staticmethod
     def insert_base_column(columns, column_name):
-        column_exists = any(column_schema.name == column_name for column_schema in columns)
+        column_exists = any(column_schema.name ==
+                            column_name for column_schema in columns)
         if not column_exists:
-            columns.insert(0, FieldSchema(name=column_name, description="", base_type=SupportedDataTypes.STRING))
+            columns.insert(0, FieldSchema(
+                name=column_name, description="", base_type=SupportedDataTypes.STRING))
 
     def _fetch_object_properties(self, object_name: str) -> List[SelectElement]:
         self._init_configuration()
