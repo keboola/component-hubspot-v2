@@ -39,6 +39,10 @@ class HubspotClientException(Exception):
     pass
 
 
+class HubspotSearchLimit(Exception):
+    pass
+
+
 class HubspotClient(HttpClient):
     def __init__(self, access_token):
         retry_settings = urlibRetry(
@@ -335,7 +339,8 @@ class HubspotClient(HttpClient):
     def _fetch_object_data(self, properties: List, endpoint_name: str, exception, basic_api, search_api,
                            search_request_object, since_date: str, since_property: str, incremental: bool = False,
                            archived: bool = False, properties_with_history: Optional[List] = None):
-        if incremental:
+        search_limit_hit = False
+        if incremental and not search_limit_hit:
             filter_groups = [{"filters": [
                 {"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
             sorts = [{"propertyName": since_property, "direction": "DESCENDING"}]
@@ -344,11 +349,20 @@ class HubspotClient(HttpClient):
                                                    properties=properties,
                                                    limit=BATCH_LIMIT,
                                                    after=0)
-            return self._paginate_v3_object_search(search_api,
-                                                   endpoint_name,
-                                                   search_request=search_request,
-                                                   exception=exception)
-        elif not incremental:
+            total = self._paginate_v3_object_search_total(search_api,
+                                                          endpoint_name,
+                                                          search_request=search_request,
+                                                          exception=exception)
+            if total >= HUBSPOT_API_SEARCH_LIMIT:
+                logging.info(
+                    f"Cannot fetch incrementally objects {endpoint_name} with more than 10000 rows per interval! Switched to full fetch for this object.")
+                search_limit_hit = True
+            else:
+                return self._paginate_v3_object_search(search_api,
+                                                       endpoint_name,
+                                                       search_request=search_request,
+                                                       exception=exception)
+        if not incremental or search_limit_hit:
             return self._paginate_v3_object(basic_api,
                                             endpoint_name,
                                             exception=exception,
@@ -480,14 +494,15 @@ class HubspotClient(HttpClient):
         while True:
             page = self._get_search_result(
                 search_callable, endpoint_name, search_request, exception)
-            if page.total >= HUBSPOT_API_SEARCH_LIMIT:
-                logging.warning(
-                    f"Cannot fetch incrementally objects {endpoint_name} with more than 10000 rows per interval!")
-                break
             yield page.results
             if page.paging is None:
                 break
             search_request.after = page.paging.next.after
+
+    def _paginate_v3_object_search_total(self, search_callable, endpoint_name, search_request, exception):
+        page = self._get_search_result(
+            search_callable, endpoint_name, search_request, exception)
+        return page.total
 
     def _get_search_result(self, search_callable, endpoint_name, search_request, exception):
         try:
