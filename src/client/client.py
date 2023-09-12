@@ -355,7 +355,8 @@ class HubspotClient(HttpClient):
                                                           exception=exception)
             if total >= HUBSPOT_API_SEARCH_LIMIT:
                 logging.info(
-                    f"Cannot fetch incrementally objects {endpoint_name} with more than 10000 rows per interval! Switched to full fetch for this object.")
+                    f"Cannot fetch incrementally objects {endpoint_name} \
+                          with more than 10000 rows per interval! Switched to full fetch for this object.")
                 search_limit_hit = True
             else:
                 return self._paginate_v3_object_search(search_api,
