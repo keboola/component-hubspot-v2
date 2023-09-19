@@ -318,18 +318,6 @@ class Component(ComponentBase):
         all_columns = list(dict.fromkeys(all_columns))
         return all_columns
 
-    @staticmethod
-    def shorten_strings(strings):
-        shortened_strings = []
-        for s in strings:
-            if len(s) > 64:
-                shortened = s[:64]
-                logging.warning(f"String '{s}' was shortened to '{shortened}'")
-                shortened_strings.append(shortened)
-            else:
-                shortened_strings.append(s)
-        return shortened_strings
-
     def _close_table_handlers(self):
         for table_handler_name in self._table_handler_cache:
             self._close_table_handler(table_handler_name)
@@ -339,7 +327,7 @@ class Component(ComponentBase):
         table_handler = self._table_handler_cache[table_handler_name]
 
         table_handler.close_writer()
-        final_field_names = self.shorten_strings(table_handler.writer_fields)
+        final_field_names = table_handler.writer_fields
         table_handler.table_definition.columns = final_field_names
         self.state[table_handler_name] = final_field_names
 
