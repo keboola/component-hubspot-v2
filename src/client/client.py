@@ -39,10 +39,6 @@ class HubspotClientException(Exception):
     pass
 
 
-class HubspotSearchLimit(Exception):
-    pass
-
-
 class HubspotClient(HttpClient):
     def __init__(self, access_token):
         retry_settings = urlibRetry(
