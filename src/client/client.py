@@ -321,8 +321,7 @@ class HubspotClient(HttpClient):
     def _fetch_object_data(self, properties: List, endpoint_name: str, exception, basic_api, search_api,
                            search_request_object, since_date: str, since_property: str, incremental: bool = False,
                            archived: bool = False, properties_with_history: Optional[List] = None):
-        search_limit_hit = False
-        if incremental and not search_limit_hit:
+        if incremental:
             filter_groups = [{"filters": [
                 {"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
             sorts = [{"propertyName": since_property, "direction": "DESCENDING"}]
@@ -335,24 +334,23 @@ class HubspotClient(HttpClient):
                                                           endpoint_name,
                                                           search_request=search_request,
                                                           exception=exception)
-            if total >= HUBSPOT_API_SEARCH_LIMIT:
-                logging.info(
-                    f"Cannot fetch incrementally object {endpoint_name}"
-                    f"with more than 10000 rows per interval! Switched to full fetch for this object."
-                )
-                search_limit_hit = True
-            else:
+            if total < HUBSPOT_API_SEARCH_LIMIT:
                 return self._paginate_v3_object_search(search_api,
                                                        endpoint_name,
                                                        search_request=search_request,
                                                        exception=exception)
-        if not incremental or search_limit_hit:
-            return self._paginate_v3_object(basic_api,
-                                            endpoint_name,
-                                            exception=exception,
-                                            properties=properties,
-                                            properties_with_history=properties_with_history,
-                                            archived=archived)
+            else:
+                logging.info(
+                    f"Cannot fetch incrementally object {endpoint_name}"
+                    f"with more than 10000 rows per interval! Switched to full fetch for this object."
+                )
+
+        return self._paginate_v3_object(basic_api,
+                                        endpoint_name,
+                                        exception=exception,
+                                        properties=properties,
+                                        properties_with_history=properties_with_history,
+                                        archived=archived)
 
     def _paginate_v3_object(self, api_object, endpoint_name, exception, **kwargs) -> Generator:
         after = None
