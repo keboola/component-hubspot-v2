@@ -21,6 +21,8 @@ ENDPOINT_FORMS = "marketing/v3/forms/"
 ENDPOINT_EMAIL_EVENTS = 'email/public/v1/events'
 ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
 
+HUBSPOT_API_SEARCH_LIMIT = 9999
+
 PAGE_MAX_SIZE = 100
 PAGE_WITH_HISTORY_MAX_SIZE = 50
 DEFAULT_V1_LIMIT = 1000
@@ -155,7 +157,7 @@ class HubspotClient(HttpClient):
                                        properties_with_history=properties_with_history,
                                        endpoint_name="ticket",
                                        search_request_object=tickets.PublicObjectSearchRequest,
-                                       search_api=self.client_v3.crm.quotes.search_api.do_search,
+                                       search_api=self.client_v3.crm.tickets.search_api.do_search,
                                        basic_api=self.client_v3.crm.tickets.basic_api,
                                        exception=tickets.ApiException,
                                        incremental=incremental,
@@ -320,24 +322,35 @@ class HubspotClient(HttpClient):
                            search_request_object, since_date: str, since_property: str, incremental: bool = False,
                            archived: bool = False, properties_with_history: Optional[List] = None):
         if incremental:
-            filter_groups = [{"filters": [{"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
+            filter_groups = [{"filters": [
+                {"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
             sorts = [{"propertyName": since_property, "direction": "DESCENDING"}]
             search_request = search_request_object(filter_groups=filter_groups,
                                                    sorts=sorts,
                                                    properties=properties,
                                                    limit=BATCH_LIMIT,
                                                    after=0)
-            return self._paginate_v3_object_search(search_api,
-                                                   endpoint_name,
-                                                   search_request=search_request,
-                                                   exception=exception)
-        elif not incremental:
-            return self._paginate_v3_object(basic_api,
-                                            endpoint_name,
-                                            exception=exception,
-                                            properties=properties,
-                                            properties_with_history=properties_with_history,
-                                            archived=archived)
+            total = self._paginate_v3_object_search_total(search_api,
+                                                          endpoint_name,
+                                                          search_request=search_request,
+                                                          exception=exception)
+            if total < HUBSPOT_API_SEARCH_LIMIT:
+                return self._paginate_v3_object_search(search_api,
+                                                       endpoint_name,
+                                                       search_request=search_request,
+                                                       exception=exception)
+            else:
+                logging.info(
+                    f"Cannot fetch incrementally object {endpoint_name}"
+                    f"with more than 10000 rows per interval! Switched to full fetch for this object."
+                )
+
+        return self._paginate_v3_object(basic_api,
+                                        endpoint_name,
+                                        exception=exception,
+                                        properties=properties,
+                                        properties_with_history=properties_with_history,
+                                        archived=archived)
 
     def _paginate_v3_object(self, api_object, endpoint_name, exception, **kwargs) -> Generator:
         after = None
@@ -458,6 +471,11 @@ class HubspotClient(HttpClient):
             if page.paging is None:
                 break
             search_request.after = page.paging.next.after
+
+    def _paginate_v3_object_search_total(self, search_callable, endpoint_name, search_request, exception):
+        page = self._get_search_result(
+            search_callable, endpoint_name, search_request, exception)
+        return page.total
 
     def _get_search_result(self, search_callable, endpoint_name, search_request, exception):
         try:
