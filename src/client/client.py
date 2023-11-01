@@ -165,8 +165,9 @@ class HubspotClient(HttpClient):
                                        since_date=since_date,
                                        since_property=since_property)
 
-    def get_owners(self) -> Generator:
-        return self._paginate_v3_object(self.client_v3.crm.owners.owners_api, "owner", exception=owners.ApiException)
+    def get_owners(self, archived: bool = False) -> Generator:
+        return self._paginate_v3_object(self.client_v3.crm.owners.owners_api, "owner", exception=owners.ApiException,
+                                        archived=archived)
 
     def get_deal_pipelines(self) -> List:
         try:
