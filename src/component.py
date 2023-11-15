@@ -157,7 +157,9 @@ class Component(ComponentBase):
         table_schema = self.get_table_schema_by_name("owner")
         self._init_table_handler("owner", table_schema)
 
-        for page in self.client.get_owners():
+        archived = self._configuration.fetch_settings.archived
+
+        for page in self.client.get_owners(archived):
             for item in page:
                 c = item.to_dict()
                 self._table_handler_cache["owner"].writerow(c)
