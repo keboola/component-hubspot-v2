@@ -353,9 +353,9 @@ class Component(ComponentBase):
 
         self._init_table_handler(association_schema.name, association_schema)
 
-        for page in self.client.get_associations(object_id_generator, from_object_type=from_object_type,
-                                                 to_object_type=to_object_type):
-            parsed_page = self._parse_association(page, from_object_type, to_object_type)
+        for page in self.client.get_associations_v4(object_id_generator, from_object_type=from_object_type,
+                                                    to_object_type=to_object_type):
+            parsed_page = self._parse_association_v4(page, from_object_type, to_object_type)
             self._table_handler_cache[association_schema.name].writerows(parsed_page)
 
     def _get_object_ids(self, file_name: str, id_name: str):
@@ -376,6 +376,35 @@ class Component(ComponentBase):
             from_id = associations._from.id  # noqa
             parsed_data.extend({"from_id": from_id, "to_id": association_to.id, "from_object_type": from_object_type,
                                 "to_object_type": to_object_type} for association_to in associations.to)
+
+        return parsed_data
+
+    @staticmethod
+    def _parse_association_v4(raw_data: List, from_object_type: str, to_object_type: str):
+        parsed_data = []
+        for associations in raw_data:
+            from_id = associations._from.id  # noqa
+
+            for association_to in associations.to:
+                to_object_id = association_to.to_object_id
+                association_types = association_to.association_types
+
+                # Extract information from association_types
+                for association_type in association_types:
+                    category = association_type.category
+                    label = association_type.label
+                    type_id = association_type.type_id
+
+                    # Construct the parsed data
+                    parsed_data.append({
+                        "from_id": from_id,
+                        "to_id": to_object_id,
+                        "from_object_type": from_object_type,
+                        "to_object_type": to_object_type,
+                        "category": category,
+                        "label": label,
+                        "type_id": type_id
+                    })
 
         return parsed_data
 
