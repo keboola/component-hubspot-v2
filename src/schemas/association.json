@@ -3,7 +3,8 @@
   "description": "",
   "primary_keys": [
     "from_id",
-    "to_id"
+    "to_id",
+    "type_id"
   ],
   "fields": [
     {
