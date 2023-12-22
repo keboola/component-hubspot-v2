@@ -142,6 +142,7 @@ class FetchMode(str, Enum):
 @dataclass
 class FetchSettings(ConfigurationBase):
     archived: bool = False
+    v4_associations: bool = False
     fetch_mode: FetchMode = FetchMode.FULL_FETCH
     date_from: str = "yesterday"
 

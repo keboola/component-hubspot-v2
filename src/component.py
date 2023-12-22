@@ -340,23 +340,43 @@ class Component(ComponentBase):
         self.write_manifest(table_handler.table_definition)
 
     def process_association(self, association):
+        v4_enabled: bool = self._configuration.fetch_settings.v4_associations
         try:
-            self.fetch_associations(association.from_object.value, association.to_object.value)
+            self.fetch_associations(from_object_type=association.from_object.value,
+                                    to_object_type=association.to_object.value,
+                                    v4_enabled=v4_enabled)
         except HubspotClientException as e:
             raise UserException(e) from e
 
-    def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
-        logging.info(f"Fetching associations from {from_object_type} to {to_object_type}")
+    def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id',
+                           v4_enabled: bool = False):
+        version_info = " v4" if v4_enabled else ""
+        logging.info(f"Fetching{version_info} associations from {from_object_type} to {to_object_type}")
+
         object_id_generator = self._get_object_ids(f"{from_object_type}.csv", id_name)
-        association_schema = self.get_table_schema_by_name("association")
-        association_schema.name = f"{from_object_type}_to_{to_object_type}_association"
+
+        association_schema_name = (
+            f"{from_object_type}_to_{to_object_type}_association"
+            if not v4_enabled
+            else f"{from_object_type}_to_{to_object_type}_association_v4"
+        )
+        association_schema = self.get_table_schema_by_name(
+            "association" if not v4_enabled else "association_v4"
+        )
+        association_schema.name = association_schema_name
 
         self._init_table_handler(association_schema.name, association_schema)
 
-        for page in self.client.get_associations_v4(object_id_generator, from_object_type=from_object_type,
-                                                    to_object_type=to_object_type):
-            parsed_page = self._parse_association_v4(page, from_object_type, to_object_type)
-            self._table_handler_cache[association_schema.name].writerows(parsed_page)
+        if not v4_enabled:
+            for page in self.client.get_associations(object_id_generator, from_object_type=from_object_type,
+                                                     to_object_type=to_object_type):
+                parsed_page = self._parse_association(page, from_object_type, to_object_type)
+                self._table_handler_cache[association_schema.name].writerows(parsed_page)
+        else:
+            for page in self.client.get_associations_v4(object_id_generator, from_object_type=from_object_type,
+                                                        to_object_type=to_object_type):
+                parsed_page = self._parse_association_v4(page, from_object_type, to_object_type)
+                self._table_handler_cache[association_schema.name].writerows(parsed_page)
 
     def _get_object_ids(self, file_name: str, id_name: str):
         table_path = path.join(self.tables_out_path, file_name)
@@ -389,13 +409,11 @@ class Component(ComponentBase):
                 to_object_id = association_to.to_object_id
                 association_types = association_to.association_types
 
-                # Extract information from association_types
                 for association_type in association_types:
                     category = association_type.category
                     label = association_type.label
                     type_id = association_type.type_id
 
-                    # Construct the parsed data
                     parsed_data.append({
                         "from_id": from_id,
                         "to_id": to_object_id,

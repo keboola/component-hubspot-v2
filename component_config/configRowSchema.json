@@ -1297,6 +1297,14 @@
           "format": "checkbox",
           "default": false,
           "description": "If checked archived objects will be fetched. Only possible in Full fetching mode"
+        },
+        "associations_v4": {
+          "type": "boolean",
+          "title": "Use v4 associations",
+          "propertyOrder": 80,
+          "format": "checkbox",
+          "default": false,
+          "description": "If checked v4 version of associations endpoint will be used."
         }
       }
     },
