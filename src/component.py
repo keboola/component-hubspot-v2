@@ -355,15 +355,14 @@ class Component(ComponentBase):
 
         object_id_generator = self._get_object_ids(f"{from_object_type}.csv", id_name)
 
-        association_schema_name = (
+        association_schema = self.get_table_schema_by_name(
+            "association" if not v4_enabled else "association_v4"
+        )
+        association_schema.name = (
             f"{from_object_type}_to_{to_object_type}_association"
             if not v4_enabled
             else f"{from_object_type}_to_{to_object_type}_association_v4"
         )
-        association_schema = self.get_table_schema_by_name(
-            "association" if not v4_enabled else "association_v4"
-        )
-        association_schema.name = association_schema_name
 
         self._init_table_handler(association_schema.name, association_schema)
 
