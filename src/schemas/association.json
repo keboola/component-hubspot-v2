@@ -3,7 +3,8 @@
   "description": "",
   "primary_keys": [
     "from_id",
-    "to_id"
+    "to_id",
+    "type_id"
   ],
   "fields": [
     {
@@ -23,6 +24,21 @@
     },
     {
       "name": "to_object_type",
+      "description": "",
+      "base_type": "STRING"
+    },
+        {
+      "name": "category",
+      "description": "",
+      "base_type": "STRING"
+    },
+        {
+      "name": "label",
+      "description": "",
+      "base_type": "STRING"
+    },
+        {
+      "name": "type_id",
       "description": "",
       "base_type": "STRING"
     }

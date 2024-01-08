@@ -301,15 +301,6 @@ class HubspotClient(HttpClient):
     def get_forms(self) -> Generator:
         yield from self._get_paged_result_pages_v3(ENDPOINT_FORMS, {})
 
-    def get_associations(self, object_id_generator: Iterator, from_object_type: str, to_object_type: str) -> Dict:
-        batch_inputs = self._format_batch_inputs(object_id_generator)
-        for input_chuck in self.divide_chunks(batch_inputs, BATCH_LIMIT):
-            batch_input_chunk = BatchInputPublicObjectId(inputs=input_chuck)
-            response = self.client_v3.crm.associations.batch_api.read(from_object_type=from_object_type,
-                                                                      to_object_type=to_object_type,
-                                                                      batch_input_public_object_id=batch_input_chunk)
-            yield response.results
-
     def get_associations_v4(
             self,
             object_id_generator: Iterator,
