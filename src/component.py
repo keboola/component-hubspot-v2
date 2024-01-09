@@ -341,21 +341,24 @@ class Component(ComponentBase):
 
     def process_association(self, association):
         try:
-            self.fetch_associations(association.from_object.value, association.to_object.value)
+            self.fetch_associations(from_object_type=association.from_object.value,
+                                    to_object_type=association.to_object.value)
         except HubspotClientException as e:
             raise UserException(e) from e
 
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
-        logging.info(f"Fetching associations from {from_object_type} to {to_object_type}")
+        logging.info(f"Fetching v4 associations from {from_object_type} to {to_object_type}")
+
         object_id_generator = self._get_object_ids(f"{from_object_type}.csv", id_name)
+
         association_schema = self.get_table_schema_by_name("association")
         association_schema.name = f"{from_object_type}_to_{to_object_type}_association"
 
         self._init_table_handler(association_schema.name, association_schema)
 
-        for page in self.client.get_associations(object_id_generator, from_object_type=from_object_type,
-                                                 to_object_type=to_object_type):
-            parsed_page = self._parse_association(page, from_object_type, to_object_type)
+        for page in self.client.get_associations_v4(object_id_generator, from_object_type=from_object_type,
+                                                    to_object_type=to_object_type):
+            parsed_page = self._parse_association_v4(page, from_object_type, to_object_type)
             self._table_handler_cache[association_schema.name].writerows(parsed_page)
 
     def _get_object_ids(self, file_name: str, id_name: str):
@@ -370,12 +373,29 @@ class Component(ComponentBase):
                 yield line.get(id_name)
 
     @staticmethod
-    def _parse_association(raw_data: List, from_object_type: str, to_object_type: str):
+    def _parse_association_v4(raw_data: List, from_object_type: str, to_object_type: str):
         parsed_data = []
         for associations in raw_data:
             from_id = associations._from.id  # noqa
-            parsed_data.extend({"from_id": from_id, "to_id": association_to.id, "from_object_type": from_object_type,
-                                "to_object_type": to_object_type} for association_to in associations.to)
+
+            for association_to in associations.to:
+                to_object_id = association_to.to_object_id
+                association_types = association_to.association_types
+
+                for association_type in association_types:
+                    category = association_type.category
+                    label = association_type.label
+                    type_id = association_type.type_id
+
+                    parsed_data.append({
+                        "from_id": from_id,
+                        "to_id": to_object_id,
+                        "from_object_type": from_object_type,
+                        "to_object_type": to_object_type,
+                        "category": category,
+                        "label": label,
+                        "type_id": type_id
+                    })
 
         return parsed_data
 
