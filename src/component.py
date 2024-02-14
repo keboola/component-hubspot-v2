@@ -487,7 +487,7 @@ class Component(ComponentBase):
         self._init_configuration()
         self._init_client()
         obj_prop = self.client.get_crm_object_properties(object_name)
-        return [SelectElement(value=prop['name'], label=prop["label"]) for prop in obj_prop]
+        return [SelectElement(value=prop['name'], label=f'{prop["label"]} ({prop["name"]})') for prop in obj_prop]
 
     @sync_action('loadContactProperties')
     def load_contact_properties(self) -> List[SelectElement]:
