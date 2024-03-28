@@ -3,7 +3,6 @@ import csv
 import datetime
 import json
 import logging
-import os
 from os import path
 from typing import Callable, List, Union, Dict
 
