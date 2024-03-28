@@ -546,27 +546,49 @@ class Component(ComponentBase):
                           "description": f"{endpoint} description",
                           "configuration": {
                               "parameters": {
-                                  "authentication_type": "API Key",
-                                  "include_contact_list_membership": True,
-                                  "property_attributes": {
-                                      "include_source": 0,
-                                      "include_versions": 0,
-                                      "include_timestamp": 0
+                                  "endpoints": {
+                                      f"{endpoint}": True
                                   },
-                                  "incremental_output": 0,
-                                  "deal_properties": "authority, budget, campaign_source, hs_analytics_source",
-                                  "download_contact_associations": False,
-                                  "period_from": "",
-                                  "contact_properties": "hs_facebookid, hs_linkedinid, ip_city, ip_country",
-                                  "call_properties": "",
-                                  "company_properties": "about_us, name, phone, facebook_company_page, city, country",
-                                  "email_properties": "",
-                                  "meeting_properties": "",
-                                  "endpoints": [
-                                      f"{endpoint}"
-                                  ],
-                                  "storage": {}
-                              }}
+                                  "associations": self._configuration.associations,
+                                  "fetch_settings": {
+                                      "archived": False,
+                                      "fetch_mode": "full_fetch"
+                                  },
+                                  "destination_settings": {
+                                      "load_mode": "full_load"
+                                  },
+                                  "additional_properties": {
+                                      "task_hidden": "false",
+                                      "form_hidden": "false",
+                                      "deal_properties": [
+                                          "dealstage"
+                                      ],
+                                      "pipeline_hidden": "false",
+                                      "contact_hidden": "false",
+                                      "line_item_hidden": "false",
+                                      "call_hidden": "false",
+                                      "contact_list_hidden": "false",
+                                      "company_hidden": "false",
+                                      "quote_hidden": "false",
+                                      "email_hidden": "false",
+                                      "meeting_hidden": "false",
+                                      "fetch_property_history": True,
+                                      "email_event_hidden": "false",
+                                      "object_properties": "custom",
+                                      "owner_hidden": "false",
+                                      "note_hidden": "false",
+                                      "campaign_hidden": "false",
+                                      "product_hidden": "false",
+                                      "email_statistic_hidden": "false",
+                                      "deal_hidden": "true",
+                                      "ticket_hidden": "false",
+                                      "deal_property_history": [
+                                          "dealstage"
+                                      ]
+                                  }
+                              },
+                              "storage": {}
+                          }
                           }
             configuration_rows.append(config_row)
         return configuration_rows
