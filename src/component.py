@@ -3,8 +3,9 @@ import csv
 import datetime
 import json
 import logging
+import os
 from os import path
-from typing import Callable, List, Union
+from typing import Callable, List, Union, Dict
 
 import dateparser
 from keboola.component.base import ComponentBase, sync_action
@@ -536,6 +537,40 @@ class Component(ComponentBase):
     @sync_action('loadTaskProperties')
     def load_task_properties(self) -> List[SelectElement]:
         return self._fetch_object_properties("task")
+
+    @sync_action('prepareRows')
+    def prepare_rows(self) -> List[Dict]:
+        self._init_configuration()
+        configuration_rows = []
+        for endpoint in self._configuration.endpoints.enabled:
+            config_row = {"name": f"{endpoint}_name",
+                          "description": f"{endpoint} description",
+                          "configuration": {
+                              "parameters": {
+                                  "authentication_type": "API Key",
+                                  "include_contact_list_membership": True,
+                                  "property_attributes": {
+                                      "include_source": 0,
+                                      "include_versions": 0,
+                                      "include_timestamp": 0
+                                  },
+                                  "incremental_output": 0,
+                                  "deal_properties": "authority, budget, campaign_source, hs_analytics_source",
+                                  "download_contact_associations": False,
+                                  "period_from": "",
+                                  "contact_properties": "hs_facebookid, hs_linkedinid, ip_city, ip_country",
+                                  "call_properties": "",
+                                  "company_properties": "about_us, name, phone, facebook_company_page, city, country",
+                                  "email_properties": "",
+                                  "meeting_properties": "",
+                                  "endpoints": [
+                                      f"{endpoint}"
+                                  ],
+                                  "storage": {}
+                              }}
+                          }
+            configuration_rows.append(config_row)
+        return configuration_rows
 
 
 if __name__ == "__main__":
