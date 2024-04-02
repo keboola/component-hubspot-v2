@@ -10,7 +10,7 @@ import dateparser
 from keboola.component.base import ComponentBase, sync_action
 from keboola.component.dao import SupportedDataTypes
 from keboola.component.exceptions import UserException
-from keboola.component.sync_actions import SelectElement
+from keboola.component.sync_actions import SelectElement, SyncActionResult
 from keboola.component.table_schema import FieldSchema, TableSchema
 from keboola.csvwriter import ElasticDictWriter
 
@@ -538,9 +538,9 @@ class Component(ComponentBase):
         return self._fetch_object_properties("task")
 
     @sync_action('prepareRows')
-    def prepare_rows(self) -> List[Dict]:
+    def prepare_rows(self) -> List[SyncActionResult]:
         params = self.configuration.parameters
-        configuration_rows = []
+        configuration_rows: List[SyncActionResult] = [SyncActionResult()]
         for endpoint in params['endpoints']:
             config_row = {"name": f"{endpoint}_name",
                           "description": f"{endpoint} description",
@@ -590,7 +590,7 @@ class Component(ComponentBase):
                               "storage": {}
                           }
                           }
-            configuration_rows.append(config_row)
+            configuration_rows.append(json.dumps(config_row))
         return configuration_rows
 
 
