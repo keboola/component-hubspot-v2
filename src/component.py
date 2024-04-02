@@ -539,9 +539,9 @@ class Component(ComponentBase):
 
     @sync_action('prepareRows')
     def prepare_rows(self) -> List[Dict]:
-        self._init_configuration()
+        params = self.configuration.parameters
         configuration_rows = []
-        for endpoint in self._configuration.endpoints.enabled:
+        for endpoint in params['endpoints']:
             config_row = {"name": f"{endpoint}_name",
                           "description": f"{endpoint} description",
                           "configuration": {
@@ -549,7 +549,7 @@ class Component(ComponentBase):
                                   "endpoints": {
                                       f"{endpoint}": True
                                   },
-                                  "associations": self._configuration.associations,
+                                  "associations": params['associations'],
                                   "fetch_settings": {
                                       "archived": False,
                                       "fetch_mode": "full_fetch"
