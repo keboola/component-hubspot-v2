@@ -10,7 +10,7 @@ import dateparser
 from keboola.component.base import ComponentBase, sync_action
 from keboola.component.dao import SupportedDataTypes
 from keboola.component.exceptions import UserException
-from keboola.component.sync_actions import SelectElement, SyncActionResult
+from keboola.component.sync_actions import SelectElement
 from keboola.component.table_schema import FieldSchema, TableSchema
 from keboola.csvwriter import ElasticDictWriter
 
