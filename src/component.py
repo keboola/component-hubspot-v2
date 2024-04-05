@@ -538,58 +538,61 @@ class Component(ComponentBase):
         return self._fetch_object_properties("task")
 
     @sync_action('prepareRows')
-    def prepare_rows(self) -> List[SyncActionResult]:
+    def prepare_rows(self) -> List[str]:
         params = self.configuration.parameters
-        configuration_rows: List[SyncActionResult] = [SyncActionResult()]
+        configuration_rows = []
         for endpoint in params['endpoints']:
-            config_row = {"name": f"{endpoint}_name",
-                          "description": f"{endpoint} description",
-                          "configuration": {
-                              "parameters": {
-                                  "endpoints": {
-                                      f"{endpoint}": True
+            config_row = {"status": "success",
+                          "message": "",
+                          "data": {
+                              "name": f"{endpoint}_name",
+                              "description": f"{endpoint} description",
+                              "configuration": {
+                                  "parameters": {
+                                      "endpoints": {
+                                          f"{endpoint}": True
+                                      },
+                                      "associations": params['associations'],
+                                      "fetch_settings": {
+                                          "archived": False,
+                                          "fetch_mode": "full_fetch"
+                                      },
+                                      "destination_settings": {
+                                          "load_mode": "full_load"
+                                      },
+                                      "additional_properties": {
+                                          "task_hidden": "false",
+                                          "form_hidden": "false",
+                                          "deal_properties": [
+                                              "dealstage"
+                                          ],
+                                          "pipeline_hidden": "false",
+                                          "contact_hidden": "false",
+                                          "line_item_hidden": "false",
+                                          "call_hidden": "false",
+                                          "contact_list_hidden": "false",
+                                          "company_hidden": "false",
+                                          "quote_hidden": "false",
+                                          "email_hidden": "false",
+                                          "meeting_hidden": "false",
+                                          "fetch_property_history": True,
+                                          "email_event_hidden": "false",
+                                          "object_properties": "custom",
+                                          "owner_hidden": "false",
+                                          "note_hidden": "false",
+                                          "campaign_hidden": "false",
+                                          "product_hidden": "false",
+                                          "email_statistic_hidden": "false",
+                                          "deal_hidden": "true",
+                                          "ticket_hidden": "false",
+                                          "deal_property_history": [
+                                              "dealstage"
+                                          ]
+                                      }
                                   },
-                                  "associations": params['associations'],
-                                  "fetch_settings": {
-                                      "archived": False,
-                                      "fetch_mode": "full_fetch"
-                                  },
-                                  "destination_settings": {
-                                      "load_mode": "full_load"
-                                  },
-                                  "additional_properties": {
-                                      "task_hidden": "false",
-                                      "form_hidden": "false",
-                                      "deal_properties": [
-                                          "dealstage"
-                                      ],
-                                      "pipeline_hidden": "false",
-                                      "contact_hidden": "false",
-                                      "line_item_hidden": "false",
-                                      "call_hidden": "false",
-                                      "contact_list_hidden": "false",
-                                      "company_hidden": "false",
-                                      "quote_hidden": "false",
-                                      "email_hidden": "false",
-                                      "meeting_hidden": "false",
-                                      "fetch_property_history": True,
-                                      "email_event_hidden": "false",
-                                      "object_properties": "custom",
-                                      "owner_hidden": "false",
-                                      "note_hidden": "false",
-                                      "campaign_hidden": "false",
-                                      "product_hidden": "false",
-                                      "email_statistic_hidden": "false",
-                                      "deal_hidden": "true",
-                                      "ticket_hidden": "false",
-                                      "deal_property_history": [
-                                          "dealstage"
-                                      ]
-                                  }
-                              },
-                              "storage": {}
-                          }
-                          }
+                                  "storage": {}
+                              }
+                          }}
             configuration_rows.append(json.dumps(config_row))
         return configuration_rows
 
