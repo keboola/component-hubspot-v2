@@ -126,6 +126,7 @@ class HubspotObject(str, Enum):
     TASK = "task"
     MEETING = "meeting"
     EMAIL = "email"
+    LINE_ITEM = "line_item"
 
 
 @dataclass
