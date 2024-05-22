@@ -27,6 +27,7 @@ PAGE_MAX_SIZE = 100
 PAGE_WITH_HISTORY_MAX_SIZE = 50
 DEFAULT_V1_LIMIT = 1000
 BATCH_LIMIT = 100
+ASSOCIATIONS_BATCH_LIMIT = 70  # reaching timeout with 100
 
 MAX_RETRIES = 5
 MAX_TIMEOUT = 10
@@ -309,7 +310,7 @@ class HubspotClient(HttpClient):
     ) -> Dict:
         batch_inputs = self._format_batch_inputs(object_id_generator)
 
-        for input_chunk in self.divide_chunks(batch_inputs, BATCH_LIMIT):
+        for input_chunk in self.divide_chunks(batch_inputs, ASSOCIATIONS_BATCH_LIMIT):
             batch_input_chunk = BatchInputPublicObjectId(inputs=input_chunk)
             response = self.client_v3.crm.associations.v4.batch_api.get_page(
                 from_object_type=from_object_type,
