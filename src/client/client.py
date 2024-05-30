@@ -29,6 +29,7 @@ BATCH_LIMIT = 100
 MAX_RETRIES = 5
 MAX_TIMEOUT = 10
 DEFAULT_BACKOFF = 0.3
+DEFAULT_ASSOCIATION_BATCH_SIZE = 100
 EVENT_TYPES = ["DEFERRED", "CLICK", "DROPPED", "DELIVERED", "PROCESSED", "OPEN", "BOUNCE", "SENT"]
 
 
@@ -37,7 +38,7 @@ class HubspotClientException(Exception):
 
 
 class HubspotClient(HttpClient):
-    def __init__(self, access_token, association_batch_size: int = 100):
+    def __init__(self, access_token, association_batch_size: int = DEFAULT_ASSOCIATION_BATCH_SIZE):
         retry_settings = urlibRetry(
             total=MAX_RETRIES,
             status=MAX_RETRIES,
@@ -50,6 +51,8 @@ class HubspotClient(HttpClient):
         super().__init__(BASE_URL, auth_header=auth_header, status_forcelist=(429, 500, 502, 504, 524))
 
         self.association_batch_size = association_batch_size
+        if self.association_batch_size != DEFAULT_ASSOCIATION_BATCH_SIZE:
+            logging.info(f"Association batch size set to {self.association_batch_size}")
 
     def get_crm_object_properties(self, object_type: str) -> List:
         try:
