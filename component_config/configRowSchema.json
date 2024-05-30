@@ -1300,7 +1300,7 @@
         },
         "associations_batch_size": {
           "title": "Association batch size",
-          "type": "integer",
+          "type": "number",
           "default": 100,
           "description": "In case you are fetching complex associations and you are facing issues with receiving 524 timeout error, you can decrease the batch size. The default value is 100."
         }
