@@ -22,13 +22,10 @@ ENDPOINT_EMAIL_EVENTS = 'email/public/v1/events'
 ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
 
 HUBSPOT_API_SEARCH_LIMIT = 9999
-
 PAGE_MAX_SIZE = 100
 PAGE_WITH_HISTORY_MAX_SIZE = 50
 DEFAULT_V1_LIMIT = 1000
 BATCH_LIMIT = 100
-ASSOCIATIONS_BATCH_LIMIT = 70  # reaching timeout with 100
-
 MAX_RETRIES = 5
 MAX_TIMEOUT = 10
 DEFAULT_BACKOFF = 0.3
@@ -40,7 +37,7 @@ class HubspotClientException(Exception):
 
 
 class HubspotClient(HttpClient):
-    def __init__(self, access_token):
+    def __init__(self, access_token, association_batch_size: int = 100):
         retry_settings = urlibRetry(
             total=MAX_RETRIES,
             status=MAX_RETRIES,
@@ -51,6 +48,8 @@ class HubspotClient(HttpClient):
         self.client_v3 = HubSpot(access_token=access_token, retry=retry_settings)
         auth_header = {'Authorization': f'Bearer {access_token}'}
         super().__init__(BASE_URL, auth_header=auth_header, status_forcelist=(429, 500, 502, 504, 524))
+
+        self.association_batch_size = association_batch_size
 
     def get_crm_object_properties(self, object_type: str) -> List:
         try:
@@ -310,7 +309,7 @@ class HubspotClient(HttpClient):
     ) -> Dict:
         batch_inputs = self._format_batch_inputs(object_id_generator)
 
-        for input_chunk in self.divide_chunks(batch_inputs, ASSOCIATIONS_BATCH_LIMIT):
+        for input_chunk in self.divide_chunks(batch_inputs, self.association_batch_size):
             batch_input_chunk = BatchInputPublicObjectId(inputs=input_chunk)
             response = self.client_v3.crm.associations.v4.batch_api.get_page(
                 from_object_type=from_object_type,

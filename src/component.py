@@ -78,7 +78,8 @@ class Component(ComponentBase):
         self._configuration: Configuration = Configuration.load_from_dict(self.configuration.parameters)
 
     def _init_client(self):
-        self.client = HubspotClient(access_token=self._configuration.pswd_private_app_token)
+        self.client = HubspotClient(access_token=self._configuration.pswd_private_app_token,
+                                    association_batch_size=self._configuration.fetch_settings.associations_batch_size)
 
     @property
     def since_fetch_date(self) -> int:
