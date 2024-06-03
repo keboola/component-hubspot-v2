@@ -145,6 +145,7 @@ class FetchSettings(ConfigurationBase):
     archived: bool = False
     fetch_mode: FetchMode = FetchMode.FULL_FETCH
     date_from: str = "yesterday"
+    associations_batch_size: int = 100
 
 
 class LoadMode(str, Enum):
