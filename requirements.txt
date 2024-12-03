@@ -1,12 +1,13 @@
-keboola.component==1.4.2
+keboola.component==1.6.8
 keboola.utils
 keboola.http-client==1.0.0
 keboola.csvwriter==1.0.1
 mock~=4.0.3
 freezegun~=1.2.2
-hubspot-api-client==8.1.1
-requests~=2.28.1
+hubspot-api-client==11.0.0
+requests~=2.32.0
 urllib3~=1.26.12
 dateparser==1.1.8
 retry==0.9.2
-https://github.com/bakobako/dataconf/zipball/main#egg=dataconf
+# https://github.com/bakobako/dataconf/zipball/main#egg=dataconf
+dataconf~=3.3.0

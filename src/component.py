@@ -7,6 +7,7 @@ from os import path
 from typing import Callable, List, Union
 
 import dateparser
+from keboola.component import dao
 from keboola.component.base import ComponentBase, sync_action
 from keboola.component.dao import SupportedDataTypes
 from keboola.component.exceptions import UserException
@@ -54,6 +55,7 @@ class Component(ComponentBase):
         self._configuration: Configuration
         self.state: dict = {}
         self._table_handler_cache: dict = {}
+        self._created_tables: dict = {}
 
     def run(self):
         self._init_configuration()
@@ -66,6 +68,7 @@ class Component(ComponentBase):
 
         for endpoint_name in self._configuration.endpoints.enabled:
             self.process_endpoint(endpoint_name)
+            self._created_tables[endpoint_name] = self._table_handler_cache[endpoint_name].table_definition
         self._close_table_handlers()
 
         for association in self._configuration.associations:
@@ -307,19 +310,17 @@ class Component(ComponentBase):
 
             table_definition = self.create_out_table_definition_from_schema(table_schema, incremental=incremental)
 
-            all_columns = self._add_columns_from_state_to_column_list(handler_name,
-                                                                      copy.copy(table_definition.columns))
+            self._add_columns_from_state_to_column_list(handler_name, table_definition)
 
-            table_definition.columns = all_columns
-
-            writer = ElasticDictWriter(table_definition.full_path, table_definition.columns)
+            writer = ElasticDictWriter(table_definition.full_path, table_definition.column_names)
             self._table_handler_cache[handler_name] = TableHandler(table_definition, writer)
 
-    def _add_columns_from_state_to_column_list(self, object_name: str, column_list) -> List:
+    def _add_columns_from_state_to_column_list(self, object_name: str, table_definition: dao.TableDefinition):
         columns_in_state = self.state.get(object_name, [])
-        all_columns = columns_in_state + column_list
-        all_columns = list(dict.fromkeys(all_columns))
-        return all_columns
+        column_names = table_definition.column_names
+        state_columns_not_in_column_names = [col for col in columns_in_state if col not in column_names]
+        for column in state_columns_not_in_column_names:
+            table_definition.add_column(column)
 
     def _close_table_handlers(self):
         for table_handler_name in self._table_handler_cache:
@@ -331,7 +332,8 @@ class Component(ComponentBase):
 
         table_handler.close_writer()
         final_field_names = table_handler.writer_fields
-        table_handler.table_definition.columns = final_field_names
+        missing_columns = [col for col in final_field_names if col not in table_handler.table_definition.column_names]
+        table_handler.table_definition.add_columns(missing_columns)
         self.state[table_handler_name] = final_field_names
 
         table_handler.swap_column_names_in_table_definition(COLUMN_NAME_SWAP.get(table_handler_name, {}))
@@ -350,7 +352,7 @@ class Component(ComponentBase):
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
         logging.info(f"Fetching v4 associations from {from_object_type} to {to_object_type}")
 
-        object_id_generator = self._get_object_ids(f"{from_object_type}.csv", id_name)
+        object_id_generator = self._get_object_ids(from_object_type, id_name)
 
         association_schema = self.get_table_schema_by_name("association")
         association_schema.name = f"{from_object_type}_to_{to_object_type}_association"
@@ -362,14 +364,11 @@ class Component(ComponentBase):
             parsed_page = self._parse_association_v4(page, from_object_type, to_object_type)
             self._table_handler_cache[association_schema.name].writerows(parsed_page)
 
-    def _get_object_ids(self, file_name: str, id_name: str):
-        table_path = path.join(self.tables_out_path, file_name)
-        metadata_path = f"{table_path}.manifest"
-        with open(metadata_path) as manifest_file:
-            manifest = json.loads(manifest_file.read())
+    def _get_object_ids(self, object_type: str, id_name: str):
+        table_definition = self._created_tables.get(object_type)
 
-        with open(table_path) as infile:
-            reader = csv.DictReader(infile, fieldnames=manifest["columns"])
+        with open(table_definition.full_path) as infile:
+            reader = csv.DictReader(infile, fieldnames=table_definition.column_names)
             for line in reader:
                 yield line.get(id_name)
 
