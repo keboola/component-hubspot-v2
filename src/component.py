@@ -191,6 +191,7 @@ class Component(ComponentBase):
         additional_property_columns = self._get_additional_properties_to_fetch(object_name)
 
         table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=additional_property_columns)
+
         self._init_table_handler(object_name, table_schema)
 
         incremental_fetch_mode = self._configuration.fetch_settings.fetch_mode != FetchMode.FULL_FETCH
@@ -211,6 +212,7 @@ class Component(ComponentBase):
         # If fetching archived also fetch non-archived objects
         if archived:
             self.fetch_and_write_to_table(object_name, data_generator, extra_arguments)
+
         extra_arguments["archived"] = False
         self.fetch_and_write_to_table(object_name, data_generator, extra_arguments)
 
