@@ -203,7 +203,7 @@ class Component(ComponentBase):
     def _process_basic_crm_object(self, object_name: str, data_generator: Callable, **kwargs) -> None:
         self._log_crm_object_fetching_message(object_name)
 
-        additional_property_columns = self._get_additional_properties_to_fetch(object_name)
+        additional_property_columns = self._get_additional_properties_to_fetch(object_name, **kwargs)
 
         table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=additional_property_columns)
 
@@ -247,8 +247,10 @@ class Component(ComponentBase):
                           f"{self._configuration.additional_properties.object_properties.value} object properties"
         logging.info(logging_message)
 
-    def _get_additional_properties_to_fetch(self, object_name) -> List[FieldSchema]:
-        if self._configuration.additional_properties.object_properties == ObjectProperties.ALL:
+    def _get_additional_properties_to_fetch(self, object_name, **kwargs) -> List[FieldSchema]:
+        # for custom object is hard to dynamically define the properties it needs to fetch all
+        if (self._configuration.additional_properties.object_properties == ObjectProperties.ALL
+                or kwargs.get('custom_object')):
             columns_with_properties = self.get_all_object_columns_with_properties(object_name)
         elif self._configuration.additional_properties.object_properties == ObjectProperties.CUSTOM:
             columns_with_properties = self.get_specified_object_columns_with_properties(object_name)
