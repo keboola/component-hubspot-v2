@@ -1,1336 +1,1372 @@
 {
-  "type": "object",
-  "title": "Configuration",
-  "id": "rootschema",
-  "required": [
-    "endpoints",
-    "additional_properties",
-    "associations",
-    "fetch_settings",
-    "destination_settings"
-  ],
-  "properties": {
-    "endpoints": {
-      "type": "object",
-      "title": "Endpoints",
-      "format": "grid-strict",
-      "propertyOrder": 10,
-      "properties": {
-        "campaign": {
-          "title": "Campaign",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
+    "type": "object",
+    "title": "Configuration",
+    "id": "rootschema",
+    "required": [
+        "endpoints",
+        "additional_properties",
+        "associations",
+        "fetch_settings",
+        "destination_settings"
+    ],
+    "properties": {
+        "endpoints": {
+            "type": "object",
+            "title": "Endpoints",
+            "format": "grid-strict",
+            "propertyOrder": 10,
+            "properties": {
+                "campaign": {
+                    "title": "Campaign",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "contact": {
+                    "title": "Contact",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "company": {
+                    "title": "Company",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "deal": {
+                    "title": "Deal",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "line_item": {
+                    "title": "Line item",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "quote": {
+                    "title": "Quote",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "product": {
+                    "title": "Product",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "owner": {
+                    "title": "Owner",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "ticket": {
+                    "title": "Ticket",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "contact_list": {
+                    "title": "Contact list",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "email_event": {
+                    "title": "Email event",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "form": {
+                    "title": "Form",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "pipeline": {
+                    "title": "Pipeline",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "note": {
+                    "title": "Note",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "call": {
+                    "title": "Call",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "task": {
+                    "title": "Task",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "meeting": {
+                    "title": "Meeting",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "email": {
+                    "title": "Email",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "email_statistic": {
+                    "title": "Email statistic",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "custom_object": {
+                    "title": "Custom object",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": false,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                }
+            }
         },
-        "contact": {
-          "title": "Contact",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
+        "additional_properties": {
+            "title": "Object Properties",
+            "type": "object",
+            "propertyOrder": 20,
+            "properties": {
+                "object_properties": {
+                    "title": "Property Fetch Mode",
+                    "propertyOrder": 10,
+                    "required": true,
+                    "type": "string",
+                    "enum": [
+                        "all",
+                        "base",
+                        "custom"
+                    ],
+                    "options": {
+                        "enum_titles": [
+                            "Fetch All Properties",
+                            "Fetch Base Properties",
+                            "Fetch Custom Properties"
+                        ]
+                    },
+                    "default": "base"
+                },
+                "fetch_property_history": {
+                    "type": "boolean",
+                    "title": "Fetch Property History",
+                    "format": "checkbox",
+                    "default": false,
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom"
+                        }
+                    },
+                    "description": "If set, property histories of all properties will be fetched",
+                    "propertyOrder": 12
+                },
+                "email_event_types": {
+                    "type": "array",
+                    "title": "Email Event Types",
+                    "format": "checkbox",
+                    "uniqueItems": true,
+                    "description": "Select which event types you want to fetch data for",
+                    "propertyOrder": 15,
+                    "options": {
+                        "dependencies": {
+                            "email_event_hidden": "true"
+                        }
+                    },
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "DEFERRED",
+                            "CLICK",
+                            "DROPPED",
+                            "DELIVERED",
+                            "PROCESSED",
+                            "OPEN",
+                            "BOUNCE",
+                            "SENT"
+                        ],
+                        "options": {
+                            "enum_titles": [
+                                "Deferred",
+                                "Click",
+                                "Dropped",
+                                "Delivered",
+                                "Processed",
+                                "Open",
+                                "Bounce",
+                                "Sent"
+                            ]
+                        }
+                    },
+                    "default": [
+                        "DEFERRED",
+                        "CLICK",
+                        "DROPPED",
+                        "DELIVERED",
+                        "PROCESSED",
+                        "OPEN",
+                        "BOUNCE",
+                        "SENT"
+                    ]
+                },
+                "custom_object_types": {
+                    "title": "Custom Object IDs",
+                    "description": "Add custom object Ids",
+                    "propertyOrder": 13,
+                    "type": "array",
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    },
+                    "options": {
+                        "tags": true,
+                        "dependencies": {
+                            "custom_object_event_hidden": "true"
+                        }
+                    }
+                },
+                "contact_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Contact - Additional Properties",
+                    "default": [
+                        "hs_facebookid",
+                        "hs_linkedinid",
+                        "ip_city",
+                        "ip_country",
+                        "ip_country_code",
+                        "newsletter_opt_in",
+                        "firstname",
+                        "linkedin_profile",
+                        "lastname",
+                        "email",
+                        "mobilephone",
+                        "phone",
+                        "city",
+                        "country",
+                        "region",
+                        "jobtitle",
+                        "company",
+                        "website",
+                        "numemployees",
+                        "industry",
+                        "associatedcompanyid",
+                        "hs_lead_status",
+                        "lastmodifieddate",
+                        "source",
+                        "hs_email_optout",
+                        "twitterhandle",
+                        "lead_type",
+                        "hubspot_owner_id",
+                        "notes_last_updated",
+                        "hs_analytics_source",
+                        "opt_in",
+                        "createdate",
+                        "hs_twitterid",
+                        "lifecyclestage"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "contact_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadContactProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Contact properties. The values must match valid Contact properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 20
+                },
+                "contact_property_history": {
+                    "title": "Contact - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 21,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.contact_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "contact_hidden": "true"
+                        }
+                    }
+                },
+                "company_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Company - Additional Properties",
+                    "default": [
+                        "about_us",
+                        "name",
+                        "phone",
+                        "facebook_company_page",
+                        "city",
+                        "country",
+                        "website",
+                        "industry",
+                        "annualrevenue",
+                        "linkedin_company_page",
+                        "hs_lastmodifieddate",
+                        "hubspot_owner_id",
+                        "notes_last_updated",
+                        "description",
+                        "createdate",
+                        "numberofemployees",
+                        "hs_lead_status",
+                        "founded_year",
+                        "twitterhandle",
+                        "linkedinbio"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "company_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadCompanyProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Company properties. The values must match valid Company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 30
+                },
+                "company_property_history": {
+                    "title": "Company - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 31,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.company_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "company_hidden": "true"
+                        }
+                    }
+                },
+                "deal_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Deal - Additional Properties",
+                    "default": [
+                        "point_of_contact",
+                        "product_of_interest",
+                        "dealname",
+                        "amount",
+                        "dealstage",
+                        "pipeline",
+                        "closedate",
+                        "hs_lastmodifieddate",
+                        "hs_createdate",
+                        "createdate",
+                        "hs_deal_stage_probability",
+                        "hs_deal_stage_probability_shadow",
+                        "hs_object_id",
+                        "amount_in_home_currency",
+                        "days_to_close",
+                        "hs_exchange_rate",
+                        "hs_forecast_amount",
+                        "hs_forecast_probability",
+                        "hs_is_closed",
+                        "hs_is_closed_won",
+                        "hs_is_deal_split",
+                        "hs_mrr",
+                        "hs_projected_amount",
+                        "hs_projected_amount_in_home_currency"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "deal_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadDealProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Deal properties. The values must match valid Deal properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 40
+                },
+                "deal_property_history": {
+                    "title": "Deal - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 41,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.deal_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "deal_hidden": "true"
+                        }
+                    }
+                },
+                "line_item_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Line Item - Additional Properties",
+                    "default": [
+                        "name",
+                        "price",
+                        "quantity",
+                        "createdate",
+                        "hs_object_id",
+                        "amount",
+                        "hs_acv",
+                        "hs_arr",
+                        "hs_created_by_user_id",
+                        "hs_margin",
+                        "hs_margin_acv",
+                        "hs_margin_arr",
+                        "hs_margin_mrr",
+                        "hs_margin_tcv",
+                        "hs_mrr",
+                        "hs_position_on_quote",
+                        "hs_pre_discount_amount",
+                        "hs_total_discount",
+                        "hs_updated_by_user_id"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "line_item_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadLineItemProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Line Item properties. The values must match valid Line Item properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 50
+                },
+                "line_item_property_history": {
+                    "title": "Line Item - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 51,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.line_item_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "line_item_hidden": "true"
+                        }
+                    }
+                },
+                "product_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Product - Additional Properties",
+                    "default": [
+                        "amount",
+                        "description",
+                        "discount",
+                        "hs_sku",
+                        "hs_url",
+                        "hubspot_owner_id",
+                        "name",
+                        "price",
+                        "quantity",
+                        "recurringbillingfrequency",
+                        "tax"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "product_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadProductProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Product properties. The values must match valid Product properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 60
+                },
+                "product_property_history": {
+                    "title": "Product - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 61,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.product_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "product_hidden": "true"
+                        }
+                    }
+                },
+                "ticket_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Ticket - Additional Properties",
+                    "default": [
+                        "hs_object_id",
+                        "hs_created_by_user_id",
+                        "closed_date",
+                        "created_by",
+                        "createdate",
+                        "hs_lastactivitydate",
+                        "hs_pipeline",
+                        "hs_resolution",
+                        "hs_ticket_id",
+                        "hs_ticket_priority"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "ticket_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadTicketProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Ticket properties. The values must match valid Ticket properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 70
+                },
+                "ticket_property_history": {
+                    "title": "Ticket - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 71,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.ticket_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "ticket_hidden": "true"
+                        }
+                    }
+                },
+                "quote_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Quote - Additional Properties",
+                    "default": [
+                        "hs_quote_number",
+                        "hs_object_id",
+                        "hs_allowed_payment_methods",
+                        "hs_collect_billing_address",
+                        "hs_created_by_user_id",
+                        "hs_language",
+                        "hs_locale",
+                        "hs_payment_status",
+                        "hs_quote_total_preference",
+                        "hs_template_type",
+                        "hs_test_mode",
+                        "hs_sender_firstname",
+                        "hs_title",
+                        "hs_expiration_date",
+                        "hs_quote_amount",
+                        "hs_status"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "quote_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadQuoteProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Quote properties. The values must match valid Quote properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 80
+                },
+                "quote_property_history": {
+                    "title": "Quote - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 81,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.quote_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "quote_hidden": "true"
+                        }
+                    }
+                },
+                "call_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Call - Additional Properties",
+                    "default": [
+                        "hs_call_title",
+                        "hs_call_status",
+                        "hs_createdate",
+                        "hs_lastmodifieddate",
+                        "hs_object_id",
+                        "hs_body_preview",
+                        "hs_created_by",
+                        "hs_created_by_user_id",
+                        "hs_engagement_source",
+                        "hubspot_owner_idm",
+                        "hs_user_ids_of_all_owners"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "call_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadCallProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Call properties. The values must match valid Call properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 90
+                },
+                "call_property_history": {
+                    "title": "Call - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 91,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.call_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "call_hidden": "true"
+                        }
+                    }
+                },
+                "email_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Email - Additional Properties",
+                    "default": [
+                        "hubspot_owner_id",
+                        "hubspot_team_id",
+                        "hubspot_owner_assigneddate",
+                        "hs_created_by",
+                        "hs_createdate",
+                        "hs_email_bcc_email",
+                        "hs_email_bcc_firstname",
+                        "hs_email_bcc_lastname",
+                        "hs_email_cc_email",
+                        "hs_email_cc_firstname",
+                        "hs_email_cc_lastname",
+                        "hs_email_from_email",
+                        "hs_email_from_firstname",
+                        "hs_email_from_lastname",
+                        "hs_email_headers"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "email_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadEmailProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Email properties. The values must match valid Email properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 100
+                },
+                "email_property_history": {
+                    "title": "Email - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 101,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.email_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "email_hidden": "true"
+                        }
+                    }
+                },
+                "meeting_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Meeting - Additional Properties",
+                    "default": [
+                        "hubspot_owner_id",
+                        "hs_user_ids_of_all_owners",
+                        "hs_meeting_start_time",
+                        "hs_meeting_end_time",
+                        "hs_body_preview_is_truncated",
+                        "hs_created_by",
+                        "hs_created_by_user_id",
+                        "hs_engagement_source",
+                        "hs_createdate",
+                        "hs_lastmodifieddate",
+                        "hs_object_id",
+                        "hs_timestamp"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "meeting_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadMeetingProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Meetinf properties. The values must match valid Meeting properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 110
+                },
+                "meeting_property_history": {
+                    "title": "Meeting - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 111,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.meeting_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "meeting_hidden": "true"
+                        }
+                    }
+                },
+                "note_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Note - Additional Properties",
+                    "default": [
+                        "hs_object_id",
+                        "hs_body_preview",
+                        "hs_engagement_source",
+                        "hs_created_by_user_id",
+                        "hs_modified_by",
+                        "hs_engagement_source_id",
+                        "hs_user_ids_of_all_owners"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "note_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadNoteProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Note properties. The values must match valid Note properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 120
+                },
+                "note_property_history": {
+                    "title": "Note - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 121,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.note_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "note_hidden": "true"
+                        }
+                    }
+                },
+                "task_properties": {
+                    "type": "array",
+                    "format": "select",
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    },
+                    "title": "Task - Additional Properties",
+                    "default": [
+                        "hs_object_id",
+                        "hs_task_subject",
+                        "hs_task_type",
+                        "hs_body_preview",
+                        "hs_created_by_user_id",
+                        "hs_engagement_source",
+                        "hs_task_for_object_type",
+                        "hs_task_last_contact_outreach",
+                        "hs_task_last_sales_activity_timestamp",
+                        "hs_task_priority",
+                        "hs_task_send_default_reminder",
+                        "hs_task_status"
+                    ],
+                    "options": {
+                        "dependencies": {
+                            "object_properties": "custom",
+                            "task_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load properties",
+                            "action": "loadTaskProperties"
+                        }
+                    },
+                    "description": "Comma separated list of Task properties. The values must match valid Task properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
+                    "uniqueItems": true,
+                    "propertyOrder": 130
+                },
+                "task_property_history": {
+                    "title": "Task - Property Histories",
+                    "type": "array",
+                    "propertyOrder": 131,
+                    "format": "select",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "watch": {
+                            "dim": "additional_properties.task_properties"
+                        },
+                        "enumSource": "dim"
+                    },
+                    "options": {
+                        "dependencies": {
+                            "fetch_property_history": true,
+                            "task_hidden": "true"
+                        }
+                    }
+                },
+                "campaign_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "campaign_hide": "rootschema.endpoints.campaign"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{campaign_hide}}"
+                },
+                "contact_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "contact_hide": "rootschema.endpoints.contact"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{contact_hide}}"
+                },
+                "company_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "company_hide": "rootschema.endpoints.company"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{company_hide}}"
+                },
+                "deal_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "deal_hide": "rootschema.endpoints.deal"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{deal_hide}}"
+                },
+                "line_item_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "line_item_hide": "rootschema.endpoints.line_item"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{line_item_hide}}"
+                },
+                "quote_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "quote_hide": "rootschema.endpoints.quote"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{quote_hide}}"
+                },
+                "product_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "product_hide": "rootschema.endpoints.product"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{product_hide}}"
+                },
+                "owner_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "owner_hide": "rootschema.endpoints.owner"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{owner_hide}}"
+                },
+                "ticket_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "ticket_hide": "rootschema.endpoints.ticket"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{ticket_hide}}"
+                },
+                "contact_list_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "contact_list_hide": "rootschema.endpoints.contact_list"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{contact_list_hide}}"
+                },
+                "email_event_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "email_event_hide": "rootschema.endpoints.email_event"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{email_event_hide}}"
+                },
+                "custom_object_event_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "custom_object_event_hide": "rootschema.endpoints.custom_object"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{custom_object_event_hide}}"
+                },
+                "form_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "form_hide": "rootschema.endpoints.form"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{form_hide}}"
+                },
+                "pipeline_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "pipeline_hide": "rootschema.endpoints.pipeline"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{pipeline_hide}}"
+                },
+                "note_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "note_hide": "rootschema.endpoints.note"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{note_hide}}"
+                },
+                "call_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "call_hide": "rootschema.endpoints.call"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{call_hide}}"
+                },
+                "task_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "task_hide": "rootschema.endpoints.task"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{task_hide}}"
+                },
+                "meeting_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "meeting_hide": "rootschema.endpoints.meeting"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{meeting_hide}}"
+                },
+                "email_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "email_hide": "rootschema.endpoints.email"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{email_hide}}"
+                },
+                "email_statistic_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "email_statistic_hide": "rootschema.endpoints.email_statistic"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{email_statistic_hide}}"
+                }
+            }
         },
-        "company": {
-          "title": "Company",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
+        "associations": {
+            "propertyOrder": 30,
+            "type": "array",
+            "format": "table",
+            "title": "Object Associations",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "title": "Object Association",
+                "properties": {
+                    "from_object": {
+                        "type": "string",
+                        "title": "From Object",
+                        "required": true,
+                        "enum": [
+                            "campaign",
+                            "contact",
+                            "company",
+                            "deal",
+                            "quote",
+                            "product",
+                            "owner",
+                            "ticket",
+                            "form",
+                            "pipeline",
+                            "note",
+                            "call",
+                            "task",
+                            "meeting",
+                            "email"
+                        ],
+                        "default": "contact"
+                    },
+                    "to_object": {
+                        "type": "string",
+                        "title": "To Object",
+                        "required": true,
+                        "enum": [
+                            "campaign",
+                            "contact",
+                            "company",
+                            "deal",
+                            "quote",
+                            "product",
+                            "owner",
+                            "ticket",
+                            "form",
+                            "pipeline",
+                            "note",
+                            "call",
+                            "task",
+                            "meeting",
+                            "email",
+                            "line_item"
+                        ],
+                        "default": "meeting"
+                    }
+                }
+            }
         },
-        "deal": {
-          "title": "Deal",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
+        "fetch_settings": {
+            "title": "Fetch Settings",
+            "type": "object",
+            "propertyOrder": 40,
+            "properties": {
+                "fetch_mode": {
+                    "type": "string",
+                    "required": true,
+                    "enum": [
+                        "full_fetch",
+                        "incremental_fetch"
+                    ],
+                    "options": {
+                        "enum_titles": [
+                            "Full Fetch",
+                            "Incremental Fetch"
+                        ]
+                    },
+                    "default": "full_fetch",
+                    "format": "checkbox",
+                    "title": "Fetch Mode",
+                    "description": "If Full fetch is used, all data will be fetched Hubspot every run. If incremental fetch is used, data will be fetched incrementally based on a specified relative or exact date. Hubspot API Endpoint for search (is it used for incremental fetching) is limited to 10,000 total results... more information is here <a href='https://developers.hubspot.com/docs/api/crm/search'>",
+                    "propertyOrder": 20
+                },
+                "date_from": {
+                    "type": "string",
+                    "title": "Fetch From Date",
+                    "options": {
+                        "dependencies": {
+                            "fetch_mode": [
+                                "incremental_fetch"
+                            ]
+                        }
+                    },
+                    "default": "yesterday",
+                    "description": "Date in YYYY-MM-DD format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc. If left empty, all records are downloaded. You can also set this as `last run`, which will fetch data from the last run of the component; if no previous successful run exists, all data up to specified Date To will be downloaded.",
+                    "propertyOrder": 30
+                },
+                "archived": {
+                    "type": "boolean",
+                    "title": "Archived",
+                    "options": {
+                        "dependencies": {
+                            "fetch_mode": [
+                                "full_fetch"
+                            ]
+                        }
+                    },
+                    "propertyOrder": 70,
+                    "format": "checkbox",
+                    "default": false,
+                    "description": "If checked archived objects will be fetched. Only possible in Full fetching mode"
+                },
+                "associations_batch_size": {
+                    "title": "Association batch size",
+                    "type": "number",
+                    "default": 100,
+                    "description": "In case you are fetching complex associations and you are facing issues with receiving 524 timeout error, you can decrease the batch size. The default value is 100."
+                }
+            }
         },
-        "line_item": {
-          "title": "Line item",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "quote": {
-          "title": "Quote",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "product": {
-          "title": "Product",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "owner": {
-          "title": "Owner",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "ticket": {
-          "title": "Ticket",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "contact_list": {
-          "title": "Contact list",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "email_event": {
-          "title": "Email event",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "form": {
-          "title": "Form",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "pipeline": {
-          "title": "Pipeline",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "note": {
-          "title": "Note",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "call": {
-          "title": "Call",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "task": {
-          "title": "Task",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "meeting": {
-          "title": "Meeting",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "email": {
-          "title": "Email",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
-        },
-        "email_statistic": {
-          "title": "Email statistic",
-          "format": "checkbox",
-          "type": "boolean",
-          "default": true,
-          "options": {
-            "grid_columns": 3
-          }
+        "destination_settings": {
+            "title": "Destination",
+            "type": "object",
+            "propertyOrder": 50,
+            "properties": {
+                "load_mode": {
+                    "type": "string",
+                    "required": true,
+                    "enum": [
+                        "full_load",
+                        "incremental_load"
+                    ],
+                    "options": {
+                        "enum_titles": [
+                            "Full Load",
+                            "Incremental Load"
+                        ]
+                    },
+                    "default": "incremental_load",
+                    "format": "checkbox",
+                    "title": "Load Mode",
+                    "description": "If Full load is used, the destination table will be overwritten every run. If incremental load is used, data will be upserted into the destination table. Tables with a primary key will have rows updated, tables without a primary key will have rows appended.",
+                    "propertyOrder": 20
+                }
+            }
         }
-      }
-    },
-    "additional_properties": {
-      "title": "Object Properties",
-      "type": "object",
-      "propertyOrder": 20,
-      "properties": {
-        "object_properties": {
-          "title": "Property Fetch Mode",
-          "propertyOrder": 10,
-          "required": true,
-          "type": "string",
-          "enum": [
-            "all",
-            "base",
-            "custom"
-          ],
-          "options": {
-            "enum_titles": [
-              "Fetch All Properties",
-              "Fetch Base Properties",
-              "Fetch Custom Properties"
-            ]
-          },
-          "default": "base"
-        },
-        "fetch_property_history": {
-          "type": "boolean",
-          "title": "Fetch Property History",
-          "format": "checkbox",
-          "default": false,
-          "options": {
-            "dependencies": {
-              "object_properties": "custom"
-            }
-          },
-          "description": "If set, property histories of all properties will be fetched",
-          "propertyOrder": 12
-        },
-        "email_event_types": {
-          "type": "array",
-          "title": "Email Event Types",
-          "format": "checkbox",
-          "uniqueItems": true,
-          "description": "Select which event types you want to fetch data for",
-          "propertyOrder": 15,
-          "options": {
-            "dependencies": {
-              "email_event_hidden": "true"
-            }
-          },
-          "items": {
-            "type": "string",
-            "enum": [
-              "DEFERRED",
-              "CLICK",
-              "DROPPED",
-              "DELIVERED",
-              "PROCESSED",
-              "OPEN",
-              "BOUNCE",
-              "SENT"
-            ],
-            "options": {
-              "enum_titles": [
-                "Deferred",
-                "Click",
-                "Dropped",
-                "Delivered",
-                "Processed",
-                "Open",
-                "Bounce",
-                "Sent"
-              ]
-            }
-          },
-          "default": [
-            "DEFERRED",
-            "CLICK",
-            "DROPPED",
-            "DELIVERED",
-            "PROCESSED",
-            "OPEN",
-            "BOUNCE",
-            "SENT"
-          ]
-        },
-        "contact_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Contact - Additional Properties",
-          "default": [
-            "hs_facebookid",
-            "hs_linkedinid",
-            "ip_city",
-            "ip_country",
-            "ip_country_code",
-            "newsletter_opt_in",
-            "firstname",
-            "linkedin_profile",
-            "lastname",
-            "email",
-            "mobilephone",
-            "phone",
-            "city",
-            "country",
-            "region",
-            "jobtitle",
-            "company",
-            "website",
-            "numemployees",
-            "industry",
-            "associatedcompanyid",
-            "hs_lead_status",
-            "lastmodifieddate",
-            "source",
-            "hs_email_optout",
-            "twitterhandle",
-            "lead_type",
-            "hubspot_owner_id",
-            "notes_last_updated",
-            "hs_analytics_source",
-            "opt_in",
-            "createdate",
-            "hs_twitterid",
-            "lifecyclestage"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "contact_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadContactProperties"
-            }
-          },
-          "description": "Comma separated list of Contact properties. The values must match valid Contact properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 20
-        },
-        "contact_property_history": {
-          "title": "Contact - Property Histories",
-          "type": "array",
-          "propertyOrder": 21,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.contact_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "contact_hidden": "true"
-            }
-          }
-        },
-        "company_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Company - Additional Properties",
-          "default": [
-            "about_us",
-            "name",
-            "phone",
-            "facebook_company_page",
-            "city",
-            "country",
-            "website",
-            "industry",
-            "annualrevenue",
-            "linkedin_company_page",
-            "hs_lastmodifieddate",
-            "hubspot_owner_id",
-            "notes_last_updated",
-            "description",
-            "createdate",
-            "numberofemployees",
-            "hs_lead_status",
-            "founded_year",
-            "twitterhandle",
-            "linkedinbio"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "company_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadCompanyProperties"
-            }
-          },
-          "description": "Comma separated list of Company properties. The values must match valid Company properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 30
-        },
-        "company_property_history": {
-          "title": "Company - Property Histories",
-          "type": "array",
-          "propertyOrder": 31,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.company_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "company_hidden": "true"
-            }
-          }
-        },
-        "deal_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Deal - Additional Properties",
-          "default": [
-            "point_of_contact",
-            "product_of_interest",
-            "dealname",
-            "amount",
-            "dealstage",
-            "pipeline",
-            "closedate",
-            "hs_lastmodifieddate",
-            "hs_createdate",
-            "createdate",
-            "hs_deal_stage_probability",
-            "hs_deal_stage_probability_shadow",
-            "hs_object_id",
-            "amount_in_home_currency",
-            "days_to_close",
-            "hs_exchange_rate",
-            "hs_forecast_amount",
-            "hs_forecast_probability",
-            "hs_is_closed",
-            "hs_is_closed_won",
-            "hs_is_deal_split",
-            "hs_mrr",
-            "hs_projected_amount",
-            "hs_projected_amount_in_home_currency"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "deal_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadDealProperties"
-            }
-          },
-          "description": "Comma separated list of Deal properties. The values must match valid Deal properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 40
-        },
-        "deal_property_history": {
-          "title": "Deal - Property Histories",
-          "type": "array",
-          "propertyOrder": 41,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.deal_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "deal_hidden": "true"
-            }
-          }
-        },
-        "line_item_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Line Item - Additional Properties",
-          "default": [
-            "name",
-            "price",
-            "quantity",
-            "createdate",
-            "hs_object_id",
-            "amount",
-            "hs_acv",
-            "hs_arr",
-            "hs_created_by_user_id",
-            "hs_margin",
-            "hs_margin_acv",
-            "hs_margin_arr",
-            "hs_margin_mrr",
-            "hs_margin_tcv",
-            "hs_mrr",
-            "hs_position_on_quote",
-            "hs_pre_discount_amount",
-            "hs_total_discount",
-            "hs_updated_by_user_id"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "line_item_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadLineItemProperties"
-            }
-          },
-          "description": "Comma separated list of Line Item properties. The values must match valid Line Item properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 50
-        },
-        "line_item_property_history": {
-          "title": "Line Item - Property Histories",
-          "type": "array",
-          "propertyOrder": 51,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.line_item_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "line_item_hidden": "true"
-            }
-          }
-        },
-        "product_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Product - Additional Properties",
-          "default": [
-            "amount",
-            "description",
-            "discount",
-            "hs_sku",
-            "hs_url",
-            "hubspot_owner_id",
-            "name",
-            "price",
-            "quantity",
-            "recurringbillingfrequency",
-            "tax"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "product_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadProductProperties"
-            }
-          },
-          "description": "Comma separated list of Product properties. The values must match valid Product properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 60
-        },
-        "product_property_history": {
-          "title": "Product - Property Histories",
-          "type": "array",
-          "propertyOrder": 61,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.product_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "product_hidden": "true"
-            }
-          }
-        },
-        "ticket_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Ticket - Additional Properties",
-          "default": [
-            "hs_object_id",
-            "hs_created_by_user_id",
-            "closed_date",
-            "created_by",
-            "createdate",
-            "hs_lastactivitydate",
-            "hs_pipeline",
-            "hs_resolution",
-            "hs_ticket_id",
-            "hs_ticket_priority"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "ticket_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadTicketProperties"
-            }
-          },
-          "description": "Comma separated list of Ticket properties. The values must match valid Ticket properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 70
-        },
-        "ticket_property_history": {
-          "title": "Ticket - Property Histories",
-          "type": "array",
-          "propertyOrder": 71,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.ticket_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "ticket_hidden": "true"
-            }
-          }
-        },
-        "quote_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Quote - Additional Properties",
-          "default": [
-            "hs_quote_number",
-            "hs_object_id",
-            "hs_allowed_payment_methods",
-            "hs_collect_billing_address",
-            "hs_created_by_user_id",
-            "hs_language",
-            "hs_locale",
-            "hs_payment_status",
-            "hs_quote_total_preference",
-            "hs_template_type",
-            "hs_test_mode",
-            "hs_sender_firstname",
-            "hs_title",
-            "hs_expiration_date",
-            "hs_quote_amount",
-            "hs_status"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "quote_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadQuoteProperties"
-            }
-          },
-          "description": "Comma separated list of Quote properties. The values must match valid Quote properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 80
-        },
-        "quote_property_history": {
-          "title": "Quote - Property Histories",
-          "type": "array",
-          "propertyOrder": 81,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.quote_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "quote_hidden": "true"
-            }
-          }
-        },
-        "call_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Call - Additional Properties",
-          "default": [
-            "hs_call_title",
-            "hs_call_status",
-            "hs_createdate",
-            "hs_lastmodifieddate",
-            "hs_object_id",
-            "hs_body_preview",
-            "hs_created_by",
-            "hs_created_by_user_id",
-            "hs_engagement_source",
-            "hubspot_owner_idm",
-            "hs_user_ids_of_all_owners"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "call_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadCallProperties"
-            }
-          },
-          "description": "Comma separated list of Call properties. The values must match valid Call properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 90
-        },
-        "call_property_history": {
-          "title": "Call - Property Histories",
-          "type": "array",
-          "propertyOrder": 91,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.call_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "call_hidden": "true"
-            }
-          }
-        },
-        "email_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Email - Additional Properties",
-          "default": [
-            "hubspot_owner_id",
-            "hubspot_team_id",
-            "hubspot_owner_assigneddate",
-            "hs_created_by",
-            "hs_createdate",
-            "hs_email_bcc_email",
-            "hs_email_bcc_firstname",
-            "hs_email_bcc_lastname",
-            "hs_email_cc_email",
-            "hs_email_cc_firstname",
-            "hs_email_cc_lastname",
-            "hs_email_from_email",
-            "hs_email_from_firstname",
-            "hs_email_from_lastname",
-            "hs_email_headers"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "email_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadEmailProperties"
-            }
-          },
-          "description": "Comma separated list of Email properties. The values must match valid Email properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 100
-        },
-        "email_property_history": {
-          "title": "Email - Property Histories",
-          "type": "array",
-          "propertyOrder": 101,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.email_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "email_hidden": "true"
-            }
-          }
-        },
-        "meeting_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Meeting - Additional Properties",
-          "default": [
-            "hubspot_owner_id",
-            "hs_user_ids_of_all_owners",
-            "hs_meeting_start_time",
-            "hs_meeting_end_time",
-            "hs_body_preview_is_truncated",
-            "hs_created_by",
-            "hs_created_by_user_id",
-            "hs_engagement_source",
-            "hs_createdate",
-            "hs_lastmodifieddate",
-            "hs_object_id",
-            "hs_timestamp"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "meeting_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadMeetingProperties"
-            }
-          },
-          "description": "Comma separated list of Meetinf properties. The values must match valid Meeting properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 110
-        },
-        "meeting_property_history": {
-          "title": "Meeting - Property Histories",
-          "type": "array",
-          "propertyOrder": 111,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.meeting_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "meeting_hidden": "true"
-            }
-          }
-        },
-        "note_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Note - Additional Properties",
-          "default": [
-            "hs_object_id",
-            "hs_body_preview",
-            "hs_engagement_source",
-            "hs_created_by_user_id",
-            "hs_modified_by",
-            "hs_engagement_source_id",
-            "hs_user_ids_of_all_owners"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "note_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadNoteProperties"
-            }
-          },
-          "description": "Comma separated list of Note properties. The values must match valid Note properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 120
-        },
-        "note_property_history": {
-          "title": "Note - Property Histories",
-          "type": "array",
-          "propertyOrder": 121,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.note_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "note_hidden": "true"
-            }
-          }
-        },
-        "task_properties": {
-          "type": "array",
-          "format": "select",
-          "items": {
-            "enum": [],
-            "type": "string"
-          },
-          "title": "Task - Additional Properties",
-          "default": [
-            "hs_object_id",
-            "hs_task_subject",
-            "hs_task_type",
-            "hs_body_preview",
-            "hs_created_by_user_id",
-            "hs_engagement_source",
-            "hs_task_for_object_type",
-            "hs_task_last_contact_outreach",
-            "hs_task_last_sales_activity_timestamp",
-            "hs_task_priority",
-            "hs_task_send_default_reminder",
-            "hs_task_status"
-          ],
-          "options": {
-            "dependencies": {
-              "object_properties": "custom",
-              "task_hidden": "true"
-            },
-            "async": {
-              "label": "Re-load properties",
-              "action": "loadTaskProperties"
-            }
-          },
-          "description": "Comma separated list of Task properties. The values must match valid Task properties, otherwise an empty value is returned. If left empty, default properties will be fetched.",
-          "uniqueItems": true,
-          "propertyOrder": 130
-        },
-        "task_property_history": {
-          "title": "Task - Property Histories",
-          "type": "array",
-          "propertyOrder": 131,
-          "format": "select",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "watch": {
-              "dim": "additional_properties.task_properties"
-            },
-            "enumSource": "dim"
-          },
-          "options": {
-            "dependencies": {
-              "fetch_property_history": true,
-              "task_hidden": "true"
-            }
-          }
-        },
-        "campaign_hidden": {
-          "type": "string",
-          "watch": {
-            "campaign_hide": "rootschema.endpoints.campaign"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{campaign_hide}}"
-        },
-        "contact_hidden": {
-          "type": "string",
-          "watch": {
-            "contact_hide": "rootschema.endpoints.contact"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{contact_hide}}"
-        },
-        "company_hidden": {
-          "type": "string",
-          "watch": {
-            "company_hide": "rootschema.endpoints.company"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{company_hide}}"
-        },
-        "deal_hidden": {
-          "type": "string",
-          "watch": {
-            "deal_hide": "rootschema.endpoints.deal"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{deal_hide}}"
-        },
-        "line_item_hidden": {
-          "type": "string",
-          "watch": {
-            "line_item_hide": "rootschema.endpoints.line_item"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{line_item_hide}}"
-        },
-        "quote_hidden": {
-          "type": "string",
-          "watch": {
-            "quote_hide": "rootschema.endpoints.quote"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{quote_hide}}"
-        },
-        "product_hidden": {
-          "type": "string",
-          "watch": {
-            "product_hide": "rootschema.endpoints.product"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{product_hide}}"
-        },
-        "owner_hidden": {
-          "type": "string",
-          "watch": {
-            "owner_hide": "rootschema.endpoints.owner"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{owner_hide}}"
-        },
-        "ticket_hidden": {
-          "type": "string",
-          "watch": {
-            "ticket_hide": "rootschema.endpoints.ticket"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{ticket_hide}}"
-        },
-        "contact_list_hidden": {
-          "type": "string",
-          "watch": {
-            "contact_list_hide": "rootschema.endpoints.contact_list"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{contact_list_hide}}"
-        },
-        "email_event_hidden": {
-          "type": "string",
-          "watch": {
-            "email_event_hide": "rootschema.endpoints.email_event"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{email_event_hide}}"
-        },
-        "form_hidden": {
-          "type": "string",
-          "watch": {
-            "form_hide": "rootschema.endpoints.form"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{form_hide}}"
-        },
-        "pipeline_hidden": {
-          "type": "string",
-          "watch": {
-            "pipeline_hide": "rootschema.endpoints.pipeline"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{pipeline_hide}}"
-        },
-        "note_hidden": {
-          "type": "string",
-          "watch": {
-            "note_hide": "rootschema.endpoints.note"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{note_hide}}"
-        },
-        "call_hidden": {
-          "type": "string",
-          "watch": {
-            "call_hide": "rootschema.endpoints.call"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{call_hide}}"
-        },
-        "task_hidden": {
-          "type": "string",
-          "watch": {
-            "task_hide": "rootschema.endpoints.task"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{task_hide}}"
-        },
-        "meeting_hidden": {
-          "type": "string",
-          "watch": {
-            "meeting_hide": "rootschema.endpoints.meeting"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{meeting_hide}}"
-        },
-        "email_hidden": {
-          "type": "string",
-          "watch": {
-            "email_hide": "rootschema.endpoints.email"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{email_hide}}"
-        },
-        "email_statistic_hidden": {
-          "type": "string",
-          "watch": {
-            "email_statistic_hide": "rootschema.endpoints.email_statistic"
-          },
-          "options": {
-            "hidden": true
-          },
-          "template": "{{email_statistic_hide}}"
-        }
-      }
-    },
-    "associations": {
-      "propertyOrder": 30,
-      "type": "array",
-      "format": "table",
-      "title": "Object Associations",
-      "uniqueItems": true,
-      "items": {
-        "type": "object",
-        "title": "Object Association",
-        "properties": {
-          "from_object": {
-            "type": "string",
-            "title": "From Object",
-            "required": true,
-            "enum": [
-              "campaign",
-              "contact",
-              "company",
-              "deal",
-              "quote",
-              "product",
-              "owner",
-              "ticket",
-              "form",
-              "pipeline",
-              "note",
-              "call",
-              "task",
-              "meeting",
-              "email"
-            ],
-            "default": "contact"
-          },
-          "to_object": {
-            "type": "string",
-            "title": "To Object",
-            "required": true,
-            "enum": [
-              "campaign",
-              "contact",
-              "company",
-              "deal",
-              "quote",
-              "product",
-              "owner",
-              "ticket",
-              "form",
-              "pipeline",
-              "note",
-              "call",
-              "task",
-              "meeting",
-              "email",
-              "line_item"
-            ],
-            "default": "meeting"
-          }
-        }
-      }
-    },
-    "fetch_settings": {
-      "title": "Fetch Settings",
-      "type": "object",
-      "propertyOrder": 40,
-      "properties": {
-        "fetch_mode": {
-          "type": "string",
-          "required": true,
-          "enum": [
-            "full_fetch",
-            "incremental_fetch"
-          ],
-          "options": {
-            "enum_titles": [
-              "Full Fetch",
-              "Incremental Fetch"
-            ]
-          },
-          "default": "full_fetch",
-          "format": "checkbox",
-          "title": "Fetch Mode",
-          "description": "If Full fetch is used, all data will be fetched Hubspot every run. If incremental fetch is used, data will be fetched incrementally based on a specified relative or exact date. Hubspot API Endpoint for search (is it used for incremental fetching) is limited to 10,000 total results... more information is here <a href='https://developers.hubspot.com/docs/api/crm/search'>",
-          "propertyOrder": 20
-        },
-        "date_from": {
-          "type": "string",
-          "title": "Fetch From Date",
-          "options": {
-            "dependencies": {
-              "fetch_mode": [
-                "incremental_fetch"
-              ]
-            }
-          },
-          "default": "yesterday",
-          "description": "Date in YYYY-MM-DD format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc. If left empty, all records are downloaded. You can also set this as `last run`, which will fetch data from the last run of the component; if no previous successful run exists, all data up to specified Date To will be downloaded.",
-          "propertyOrder": 30
-        },
-        "archived": {
-          "type": "boolean",
-          "title": "Archived",
-          "options": {
-            "dependencies": {
-              "fetch_mode": [
-                "full_fetch"
-              ]
-            }
-          },
-          "propertyOrder": 70,
-          "format": "checkbox",
-          "default": false,
-          "description": "If checked archived objects will be fetched. Only possible in Full fetching mode"
-        },
-        "associations_batch_size": {
-          "title": "Association batch size",
-          "type": "number",
-          "default": 100,
-          "description": "In case you are fetching complex associations and you are facing issues with receiving 524 timeout error, you can decrease the batch size. The default value is 100."
-        }
-      }
-    },
-    "destination_settings": {
-      "title": "Destination",
-      "type": "object",
-      "propertyOrder": 50,
-      "properties": {
-        "load_mode": {
-          "type": "string",
-          "required": true,
-          "enum": [
-            "full_load",
-            "incremental_load"
-          ],
-          "options": {
-            "enum_titles": [
-              "Full Load",
-              "Incremental Load"
-            ]
-          },
-          "default": "incremental_load",
-          "format": "checkbox",
-          "title": "Load Mode",
-          "description": "If Full load is used, the destination table will be overwritten every run. If incremental load is used, data will be upserted into the destination table. Tables with a primary key will have rows updated, tables without a primary key will have rows appended.",
-          "propertyOrder": 20
-        }
-      }
     }
-  }
 }

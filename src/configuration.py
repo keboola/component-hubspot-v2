@@ -67,6 +67,7 @@ class Endpoints(ConfigurationBase):
     meeting: bool = False
     email: bool = False
     email_statistic: bool = False
+    custom_object: bool = False
 
     @property
     def enabled(self):
@@ -83,6 +84,7 @@ class ObjectProperties(str, Enum):
 class AdditionalProperties(ConfigurationBase):
     fetch_property_history: bool = False
     email_event_types: Union[str, list[str]] = field(default_factory=list)
+    custom_object_types: Union[str, list[str]] = field(default_factory=list)
     contact_properties: Union[str, list[str]] = field(default_factory=list)
     contact_property_history: Union[str, list[str]] = field(default_factory=list)
     company_properties: Union[str, list[str]] = field(default_factory=list)
@@ -127,6 +129,7 @@ class HubspotObject(str, Enum):
     MEETING = "meeting"
     EMAIL = "email"
     LINE_ITEM = "line_item"
+    CUSTOM_OBJECT = "custom_object"
 
 
 @dataclass

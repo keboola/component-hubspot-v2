@@ -56,7 +56,8 @@ class Component(ComponentBase):
 
     def run(self):
         self._init_configuration()
-        self.validate_associations()
+        self._validate_associations()
+        self._validate_custom_objects()
 
         self.state = self.get_state_file()
         self.state["last_run"] = self._parse_date("now")
@@ -64,14 +65,25 @@ class Component(ComponentBase):
         self._init_client()
 
         for endpoint_name in self._configuration.endpoints.enabled:
-            self.process_endpoint(endpoint_name)
-            self._created_tables[endpoint_name] = self._table_handler_cache[endpoint_name].table_definition
+            if endpoint_name == "custom_object":
+                custom_object_types = self._configuration.additional_properties.custom_object_types
+                for custom_object in custom_object_types:
+                    self.get_custom_objects(custom_object)
+                    self._created_tables[custom_object] = self._table_handler_cache[custom_object].table_definition
+            else:
+                self.process_endpoint(endpoint_name)
+                self._created_tables[endpoint_name] = self._table_handler_cache[endpoint_name].table_definition
         self._close_table_handlers()
 
         for association in self._configuration.associations:
             self.process_association(association)
         self._close_table_handlers()
         self.write_state_file(self.state)
+
+    def _validate_custom_objects(self):
+        if self._configuration.endpoints.custom_object:
+            if not self._configuration.additional_properties.custom_object_types:
+                raise UserException("Custom object types must be specified in the configuration.")
 
     def _init_configuration(self):
         self.validate_configuration_parameters(Configuration.get_dataclass_required_parameters())
@@ -185,7 +197,10 @@ class Component(ComponentBase):
                 parsed_stage = parser.parse_row(stage)
                 self._table_handler_cache["pipeline_stage"].writerow({"pipeline_id": pipeline_id, **parsed_stage})
 
-    def _process_basic_crm_object(self, object_name: str, data_generator: Callable) -> None:
+    def get_custom_objects(self, custom_object) -> None:
+        self._process_basic_crm_object(custom_object, self.client.get_custom_objects, custom_object=custom_object)
+
+    def _process_basic_crm_object(self, object_name: str, data_generator: Callable, **kwargs) -> None:
         self._log_crm_object_fetching_message(object_name)
 
         additional_property_columns = self._get_additional_properties_to_fetch(object_name)
@@ -201,7 +216,8 @@ class Component(ComponentBase):
         extra_arguments = {"object_properties": table_schema.field_names,
                            "archived": archived,
                            "incremental": incremental_fetch_mode,
-                           "since_date": self.since_fetch_date}
+                           "since_date": self.since_fetch_date,
+                           **kwargs}
 
         if self._configuration.additional_properties.fetch_property_history:
             custom_props_str = getattr(self._configuration.additional_properties, f"{object_name}_property_history")
@@ -411,7 +427,7 @@ class Component(ComponentBase):
                                 f"format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc.") from err
         return parsed_timestamp
 
-    def validate_associations(self) -> None:
+    def _validate_associations(self) -> None:
         fetching_endpoints = [endpoint_name for endpoint_name, fetch_endpoint in
                               vars(self._configuration.endpoints).items() if
                               fetch_endpoint]
