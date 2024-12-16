@@ -383,7 +383,8 @@ class HubspotClient(HttpClient):
                                         exception=exception,
                                         properties=properties,
                                         properties_with_history=properties_with_history,
-                                        archived=archived)
+                                        archived=archived,
+                                        **kwargs)
 
     def _paginate_v3_object(self, api_object, endpoint_name, exception, **kwargs) -> Generator:
         after = None
