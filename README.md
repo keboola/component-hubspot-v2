@@ -63,6 +63,10 @@ The following endpoints are downloadable via this component :
 If you need more endpoints, please submit your request to
 [ideas.keboola.com](https://ideas.keboola.com/)
 
+#### Custom Objects
+Custom object is available for enterprise licence. You can specify the custom object type you want to download using the `custom_object_types` input.
+
+
 ## Additional Endpoint Options
 
 ### Additional properties
@@ -81,6 +85,7 @@ Additional properties are available for fetching for the following CRM objects :
 * Products
 * Quotes
 * Tickets
+* Custom Objects (only all properties)
 
 You can select which properties you want to fetch for each of the above CRM object using the **Property Fetch Mode**
 by selecting, **all**, **base**, or **custom**. If you select **all**, then all available properties for each object
@@ -88,6 +93,7 @@ will be downloaded.
 If you select **base**, then only the base properties are downloaded.
 If you select **custom**, then you can specify a string of a comma separated list of properties you wish to download for
 each object using the "{{object_name}}_properties" input.
+
 
 ### Email event types
 
@@ -102,6 +108,7 @@ types : ["DEFERRED","CLICK","DROPPED","DELIVERED","PROCESSED","OPEN","BOUNCE","S
     * Campaign (campaign) : bool
     * Contact (contact) : bool
     * Company (company) : bool
+    * Custom Object (custom_object) : bool
     * Deal (deal) : bool
     * Line Item (line_item) : bool
     * Quote (quote) : bool
@@ -146,6 +153,7 @@ types : ["DEFERRED","CLICK","DROPPED","DELIVERED","PROCESSED","OPEN","BOUNCE","S
     * Task Properties (task_properties) : Union[str, list[str]]
     * Task Property History (task_property_history) : Union[str, list[str]]
     * Object Properties (object_properties) : object_properties
+    * Custom Object Types  (custom_object_types) : Union[str, list[str]]
 * Associations (associations) : list
 * Fetch Settings (fetch_settings) :
     * Archived (archived) : bool
@@ -196,7 +204,8 @@ types : ["DEFERRED","CLICK","DROPPED","DELIVERED","PROCESSED","OPEN","BOUNCE","S
       "email": true,
       "company": true,
       "contact_list": true,
-      "call": true
+      "call": true,
+      "custom_object": true
     },
     "associations": [
       {
@@ -212,6 +221,7 @@ types : ["DEFERRED","CLICK","DROPPED","DELIVERED","PROCESSED","OPEN","BOUNCE","S
       "load_mode": "incremental_load"
     },
     "additional_properties": {
+      "custom_object_types": ["my_custom_object_type"],
       "object_properties": "custom",
       "email_event_types": [
         "DEFERRED",

@@ -1,12 +1,10 @@
-import copy
 import csv
 import datetime
-import json
 import logging
-from os import path
 from typing import Callable, List, Union
 
 import dateparser
+from keboola.component import dao
 from keboola.component.base import ComponentBase, sync_action
 from keboola.component.dao import SupportedDataTypes
 from keboola.component.exceptions import UserException
@@ -54,10 +52,12 @@ class Component(ComponentBase):
         self._configuration: Configuration
         self.state: dict = {}
         self._table_handler_cache: dict = {}
+        self._created_tables: dict = {}
 
     def run(self):
         self._init_configuration()
-        self.validate_associations()
+        self._validate_associations()
+        self._validate_custom_objects()
 
         self.state = self.get_state_file()
         self.state["last_run"] = self._parse_date("now")
@@ -65,13 +65,25 @@ class Component(ComponentBase):
         self._init_client()
 
         for endpoint_name in self._configuration.endpoints.enabled:
-            self.process_endpoint(endpoint_name)
+            if endpoint_name == "custom_object":
+                custom_object_types = self._configuration.additional_properties.custom_object_types
+                for custom_object in custom_object_types:
+                    self.get_custom_objects(custom_object)
+                    self._created_tables[custom_object] = self._table_handler_cache[custom_object].table_definition
+            else:
+                self.process_endpoint(endpoint_name)
+                self._created_tables[endpoint_name] = self._table_handler_cache[endpoint_name].table_definition
         self._close_table_handlers()
 
         for association in self._configuration.associations:
             self.process_association(association)
         self._close_table_handlers()
         self.write_state_file(self.state)
+
+    def _validate_custom_objects(self):
+        if self._configuration.endpoints.custom_object:
+            if not self._configuration.additional_properties.custom_object_types:
+                raise UserException("Custom object types must be specified in the configuration.")
 
     def _init_configuration(self):
         self.validate_configuration_parameters(Configuration.get_dataclass_required_parameters())
@@ -185,12 +197,16 @@ class Component(ComponentBase):
                 parsed_stage = parser.parse_row(stage)
                 self._table_handler_cache["pipeline_stage"].writerow({"pipeline_id": pipeline_id, **parsed_stage})
 
-    def _process_basic_crm_object(self, object_name: str, data_generator: Callable) -> None:
+    def get_custom_objects(self, custom_object) -> None:
+        self._process_basic_crm_object(custom_object, self.client.get_custom_objects, custom_object=custom_object)
+
+    def _process_basic_crm_object(self, object_name: str, data_generator: Callable, **kwargs) -> None:
         self._log_crm_object_fetching_message(object_name)
 
-        additional_property_columns = self._get_additional_properties_to_fetch(object_name)
+        additional_property_columns = self._get_additional_properties_to_fetch(object_name, **kwargs)
 
         table_schema = TableSchema(name=object_name, primary_keys=["id"], fields=additional_property_columns)
+
         self._init_table_handler(object_name, table_schema)
 
         incremental_fetch_mode = self._configuration.fetch_settings.fetch_mode != FetchMode.FULL_FETCH
@@ -200,7 +216,8 @@ class Component(ComponentBase):
         extra_arguments = {"object_properties": table_schema.field_names,
                            "archived": archived,
                            "incremental": incremental_fetch_mode,
-                           "since_date": self.since_fetch_date}
+                           "since_date": self.since_fetch_date,
+                           **kwargs}
 
         if self._configuration.additional_properties.fetch_property_history:
             custom_props_str = getattr(self._configuration.additional_properties, f"{object_name}_property_history")
@@ -211,6 +228,7 @@ class Component(ComponentBase):
         # If fetching archived also fetch non-archived objects
         if archived:
             self.fetch_and_write_to_table(object_name, data_generator, extra_arguments)
+
         extra_arguments["archived"] = False
         self.fetch_and_write_to_table(object_name, data_generator, extra_arguments)
 
@@ -229,8 +247,10 @@ class Component(ComponentBase):
                           f"{self._configuration.additional_properties.object_properties.value} object properties"
         logging.info(logging_message)
 
-    def _get_additional_properties_to_fetch(self, object_name) -> List[FieldSchema]:
-        if self._configuration.additional_properties.object_properties == ObjectProperties.ALL:
+    def _get_additional_properties_to_fetch(self, object_name, **kwargs) -> List[FieldSchema]:
+        # for custom object is hard to dynamically define the properties it needs to fetch all
+        if (self._configuration.additional_properties.object_properties == ObjectProperties.ALL
+                or kwargs.get('custom_object')):
             columns_with_properties = self.get_all_object_columns_with_properties(object_name)
         elif self._configuration.additional_properties.object_properties == ObjectProperties.CUSTOM:
             columns_with_properties = self.get_specified_object_columns_with_properties(object_name)
@@ -307,19 +327,17 @@ class Component(ComponentBase):
 
             table_definition = self.create_out_table_definition_from_schema(table_schema, incremental=incremental)
 
-            all_columns = self._add_columns_from_state_to_column_list(handler_name,
-                                                                      copy.copy(table_definition.columns))
+            self._add_columns_from_state_to_column_list(handler_name, table_definition)
 
-            table_definition.columns = all_columns
-
-            writer = ElasticDictWriter(table_definition.full_path, table_definition.columns)
+            writer = ElasticDictWriter(table_definition.full_path, table_definition.column_names)
             self._table_handler_cache[handler_name] = TableHandler(table_definition, writer)
 
-    def _add_columns_from_state_to_column_list(self, object_name: str, column_list) -> List:
+    def _add_columns_from_state_to_column_list(self, object_name: str, table_definition: dao.TableDefinition):
         columns_in_state = self.state.get(object_name, [])
-        all_columns = columns_in_state + column_list
-        all_columns = list(dict.fromkeys(all_columns))
-        return all_columns
+        column_names = table_definition.column_names
+        state_columns_not_in_column_names = [col for col in columns_in_state if col not in column_names]
+        for column in state_columns_not_in_column_names:
+            table_definition.add_column(column)
 
     def _close_table_handlers(self):
         for table_handler_name in self._table_handler_cache:
@@ -331,7 +349,8 @@ class Component(ComponentBase):
 
         table_handler.close_writer()
         final_field_names = table_handler.writer_fields
-        table_handler.table_definition.columns = final_field_names
+        missing_columns = [col for col in final_field_names if col not in table_handler.table_definition.column_names]
+        table_handler.table_definition.add_columns(missing_columns)
         self.state[table_handler_name] = final_field_names
 
         table_handler.swap_column_names_in_table_definition(COLUMN_NAME_SWAP.get(table_handler_name, {}))
@@ -350,7 +369,7 @@ class Component(ComponentBase):
     def fetch_associations(self, from_object_type: str, to_object_type: str, id_name: str = 'id'):
         logging.info(f"Fetching v4 associations from {from_object_type} to {to_object_type}")
 
-        object_id_generator = self._get_object_ids(f"{from_object_type}.csv", id_name)
+        object_id_generator = self._get_object_ids(from_object_type, id_name)
 
         association_schema = self.get_table_schema_by_name("association")
         association_schema.name = f"{from_object_type}_to_{to_object_type}_association"
@@ -362,14 +381,11 @@ class Component(ComponentBase):
             parsed_page = self._parse_association_v4(page, from_object_type, to_object_type)
             self._table_handler_cache[association_schema.name].writerows(parsed_page)
 
-    def _get_object_ids(self, file_name: str, id_name: str):
-        table_path = path.join(self.tables_out_path, file_name)
-        metadata_path = f"{table_path}.manifest"
-        with open(metadata_path) as manifest_file:
-            manifest = json.loads(manifest_file.read())
+    def _get_object_ids(self, object_type: str, id_name: str):
+        table_definition = self._created_tables.get(object_type)
 
-        with open(table_path) as infile:
-            reader = csv.DictReader(infile, fieldnames=manifest["columns"])
+        with open(table_definition.full_path) as infile:
+            reader = csv.DictReader(infile, fieldnames=table_definition.column_names)
             for line in reader:
                 yield line.get(id_name)
 
@@ -413,7 +429,7 @@ class Component(ComponentBase):
                                 f"format or relative date i.e. 5 days ago, 1 month ago, yesterday, etc.") from err
         return parsed_timestamp
 
-    def validate_associations(self) -> None:
+    def _validate_associations(self) -> None:
         fetching_endpoints = [endpoint_name for endpoint_name, fetch_endpoint in
                               vars(self._configuration.endpoints).items() if
                               fetch_endpoint]

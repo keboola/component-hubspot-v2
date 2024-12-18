@@ -6,7 +6,7 @@ from typing import Dict, Generator, Iterator, List, Optional
 import requests
 from hubspot import HubSpot
 from hubspot.crm import (companies, contacts, deals, line_items, owners,
-                         pipelines, products, properties, quotes, tickets)
+                         pipelines, products, properties, quotes, tickets, objects)
 from hubspot.crm.associations import BatchInputPublicObjectId
 from hubspot.crm.objects import calls, emails, meetings, notes, tasks
 from keboola.http_client import HttpClient
@@ -20,6 +20,7 @@ ENDPOINTS_CONTACT_LISTS = "contacts/v1/lists/"
 ENDPOINT_FORMS = "marketing/v3/forms/"
 ENDPOINT_EMAIL_EVENTS = 'email/public/v1/events'
 ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
+ENDPOINT_CUSTOM_OBJECTS = 'crm/v3/objects'
 
 HUBSPOT_API_SEARCH_LIMIT = 9999
 PAGE_MAX_SIZE = 100
@@ -287,6 +288,23 @@ class HubspotClient(HttpClient):
         self._check_http_result(req, "campaigns")
         return req.json()
 
+    def get_custom_objects(self, object_properties: List, incremental: bool = False, archived: bool = False,
+                           since_date: str = None, since_property: str = "hs_lastmodifieddate",
+                           properties_with_history: Optional[List] = None, custom_object: str = None) -> Generator:
+        logging.info(f"Fetching Custom Object: {custom_object}")
+        return self._fetch_object_data(properties=object_properties,
+                                       properties_with_history=properties_with_history,
+                                       endpoint_name=custom_object,
+                                       search_request_object=objects.PublicObjectSearchRequest,
+                                       search_api=self.client_v3.crm.objects.search_api.do_search,
+                                       basic_api=self.client_v3.crm.objects.basic_api,
+                                       exception=objects.ApiException,
+                                       incremental=incremental,
+                                       archived=archived,
+                                       since_date=since_date,
+                                       since_property=since_property,
+                                       object_type=custom_object)
+
     def get_contact_lists(self) -> Generator:
         yield from self._get_paged_result_pages(ENDPOINTS_CONTACT_LISTS, {}, 'lists')
 
@@ -332,7 +350,8 @@ class HubspotClient(HttpClient):
 
     def _fetch_object_data(self, properties: List, endpoint_name: str, exception, basic_api, search_api,
                            search_request_object, since_date: str, since_property: str, incremental: bool = False,
-                           archived: bool = False, properties_with_history: Optional[List] = None):
+                           archived: bool = False, properties_with_history: Optional[List] = None,
+                           **kwargs) -> Generator:
         if incremental:
             filter_groups = [{"filters": [
                 {"value": since_date, "propertyName": since_property, "operator": "GTE"}]}]
@@ -345,12 +364,14 @@ class HubspotClient(HttpClient):
             total = self._paginate_v3_object_search_total(search_api,
                                                           endpoint_name,
                                                           search_request=search_request,
-                                                          exception=exception)
+                                                          exception=exception,
+                                                          **kwargs)
             if total < HUBSPOT_API_SEARCH_LIMIT:
                 return self._paginate_v3_object_search(search_api,
                                                        endpoint_name,
                                                        search_request=search_request,
-                                                       exception=exception)
+                                                       exception=exception,
+                                                       **kwargs)
             else:
                 logging.info(
                     f"Cannot fetch incrementally object {endpoint_name}"
@@ -362,7 +383,8 @@ class HubspotClient(HttpClient):
                                         exception=exception,
                                         properties=properties,
                                         properties_with_history=properties_with_history,
-                                        archived=archived)
+                                        archived=archived,
+                                        **kwargs)
 
     def _paginate_v3_object(self, api_object, endpoint_name, exception, **kwargs) -> Generator:
         after = None
@@ -476,21 +498,21 @@ class HubspotClient(HttpClient):
 
         return response, parameters, has_more
 
-    def _paginate_v3_object_search(self, search_callable, endpoint_name, search_request, exception):
+    def _paginate_v3_object_search(self, search_callable, endpoint_name, search_request, exception, **kwargs):
         while True:
-            page = self._get_search_result(search_callable, endpoint_name, search_request, exception)
+            page = self._get_search_result(search_callable, endpoint_name, search_request, exception, **kwargs)
             yield page.results
             if page.paging is None:
                 break
             search_request.after = page.paging.next.after
 
-    def _paginate_v3_object_search_total(self, search_callable, endpoint_name, search_request, exception):
+    def _paginate_v3_object_search_total(self, search_callable, endpoint_name, search_request, exception, **kwargs):
         page = self._get_search_result(
-            search_callable, endpoint_name, search_request, exception)
+            search_callable, endpoint_name, search_request, exception, **kwargs)
         return page.total
 
-    def _get_search_result(self, search_callable, endpoint_name, search_request, exception):
+    def _get_search_result(self, search_callable, endpoint_name, search_request, exception, **kwargs):
         try:
-            return search_callable(public_object_search_request=search_request)
+            return search_callable(public_object_search_request=search_request, **kwargs)
         except exception as exc:
             self._raise_exception_from_status_code(exc.status, endpoint_name, exc.body)
