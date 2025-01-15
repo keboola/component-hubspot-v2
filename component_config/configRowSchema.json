@@ -16,7 +16,7 @@
             "format": "grid-strict",
             "propertyOrder": 10,
             "properties": {
-                "engagements": {
+                "engagement": {
                     "title": "Engagement",
                     "format": "checkbox",
                     "type": "boolean",
