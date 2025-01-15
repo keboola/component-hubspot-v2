@@ -27,6 +27,7 @@ class Component(ComponentBase):
     def __init__(self):
         super().__init__()
         self.endpoint_func_mapping = {
+            "engagement": self.get_engagements,
             "campaign": self.get_campaigns,
             "contact": self.get_contacts,
             "company": self.get_companies,
@@ -110,6 +111,10 @@ class Component(ComponentBase):
             self.endpoint_func_mapping[endpoint_name]()
         except HubspotClientException as e:
             raise UserException(e) from e
+
+    def get_engagements(self):
+        since = self.since_fetch_date
+        self._process_basic_crm_object("engagement", self.client.get_engagements, updated_since=since)
 
     def get_contacts(self) -> None:
         self._process_basic_crm_object("contact", self.client.get_contacts)

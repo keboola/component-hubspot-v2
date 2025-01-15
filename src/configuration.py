@@ -48,6 +48,7 @@ class ConfigurationBase:
 
 @dataclass
 class Endpoints(ConfigurationBase):
+    engagement: bool = False
     campaign: bool = False
     contact: bool = False
     company: bool = False

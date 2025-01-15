@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 import logging
 from json import JSONDecodeError
 from typing import Dict, Generator, Iterator, List, Optional
@@ -21,6 +22,8 @@ ENDPOINT_FORMS = "marketing/v3/forms/"
 ENDPOINT_EMAIL_EVENTS = 'email/public/v1/events'
 ENDPOINT_EMAIL_STATISTICS = 'marketing-emails/v1/emails/with-statistics'
 ENDPOINT_CUSTOM_OBJECTS = 'crm/v3/objects'
+ENDPOINT_ENGAGEMENTS_PAGED = 'engagements/v1/engagements/paged'
+ENDPOINT_ENGAGEMENTS_PAGED_SINCE = 'engagements/v1/engagements/recent/modified'
 
 HUBSPOT_API_SEARCH_LIMIT = 9999
 PAGE_MAX_SIZE = 100
@@ -338,6 +341,16 @@ class HubspotClient(HttpClient):
                 batch_input_public_fetch_associations_batch_request=batch_input_chunk
             )
             yield response.results
+
+    def get_engagements(
+            self,
+            start_time: datetime,
+    ) -> Generator:
+        if start_time:
+            yield from self._get_paged_result_pages_v3(ENDPOINT_ENGAGEMENTS_PAGED_SINCE, {"since": start_time})
+
+        else:
+            yield from self._get_paged_result_pages_v3(ENDPOINT_ENGAGEMENTS_PAGED, {})
 
     @staticmethod
     def _format_batch_inputs(object_ids):

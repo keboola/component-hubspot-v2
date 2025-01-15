@@ -16,6 +16,15 @@
             "format": "grid-strict",
             "propertyOrder": 10,
             "properties": {
+                "engagements": {
+                    "title": "Engagement",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": true,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
                 "campaign": {
                     "title": "Campaign",
                     "format": "checkbox",
