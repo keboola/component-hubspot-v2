@@ -4,6 +4,9 @@ on:
     branches:
       - 'feature/*'
       - 'bug/*'
+      - 'bugfix/*'
+      - 'hotfix/*'
+      - 'fix/*'
     tags:
       - '*' # Skip the workflow on the main branch without tags
 
@@ -47,7 +50,7 @@ jobs:
             echo "branch_name=$branch_name" | tee -a $GITHUB_OUTPUT
           else
             raw=$(git branch -r --contains ${{ github.ref }})
-            branch="$(echo ${raw//origin\//} | tr -d '\n')"
+            branch="$(echo $raw | sed "s/.*origin\///" | tr -d '\n')"
             echo "branch_name=$branch" | tee -a $GITHUB_OUTPUT
           fi
 

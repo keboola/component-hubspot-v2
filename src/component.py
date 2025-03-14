@@ -19,8 +19,6 @@ from table_handler import TableHandler
 
 DEFAULT_DATE_FROM = "1990-01-01"
 
-COLUMN_NAME_SWAP = {"contact_list": {"listId": "id"}}
-
 
 class Component(ComponentBase):
 
@@ -352,8 +350,6 @@ class Component(ComponentBase):
         missing_columns = [col for col in final_field_names if col not in table_handler.table_definition.column_names]
         table_handler.table_definition.add_columns(missing_columns)
         self.state[table_handler_name] = final_field_names
-
-        table_handler.swap_column_names_in_table_definition(COLUMN_NAME_SWAP.get(table_handler_name, {}))
 
         prev_run_cols = self.state.get(table_handler_name, [])
         table_handler.redefine_table_column_metadata(prev_run_cols)
