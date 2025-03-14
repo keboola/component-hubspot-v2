@@ -36,35 +36,3 @@ class TableHandler:
     @property
     def writer_fields(self):
         return copy.copy(self.writer.fieldnames)
-
-    def swap_column_names_in_table_definition(self, column_swaps: dict):
-
-        columns = self.writer.fieldnames
-
-        key_map = {}
-        for i, column_name in enumerate(columns):
-            if column_name in list(column_swaps.keys()):
-                key_map[column_name] = column_swaps[column_name]
-                columns[i] = column_swaps[column_name]
-
-        column_metadata = self.table_definition.table_metadata.column_metadata
-        self.table_definition.table_metadata.column_metadata = {key_map.get(k, k): v
-                                                                for (k, v) in
-                                                                column_metadata.items()}
-        primary_keys = self.table_definition.primary_key
-        new_primary_keys = []
-        for primary_key in primary_keys:
-            if primary_key in list(column_swaps.keys()):
-                new_primary_keys.append(column_swaps[primary_key])
-            else:
-                new_primary_keys.append(primary_key)
-        self.table_definition.primary_key = new_primary_keys
-
-        columns = self.table_definition.columns
-        new_columns = []
-        for column in columns:
-            if column in list(column_swaps.keys()):
-                new_columns.append(column_swaps[column])
-            else:
-                new_columns.append(column)
-        self.table_definition.columns = new_columns
