@@ -21,7 +21,9 @@ class TableHandler:
         new_metadata = {}
         for col_name in self.table_definition.table_metadata.column_metadata:
             if col_name not in state_columns:
-                new_metadata[col_name] = self.table_definition.table_metadata.column_metadata[col_name]
+                new_metadata[col_name] = (
+                    self.table_definition.table_metadata.column_metadata[col_name]
+                )
         self.table_definition.table_metadata.column_metadata = new_metadata
 
     def writerows(self, row_dicts):
