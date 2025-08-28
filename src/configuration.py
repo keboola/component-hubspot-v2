@@ -70,6 +70,7 @@ class Endpoints(ConfigurationBase):
     email: bool = False
     email_statistic: bool = False
     custom_object: bool = False
+    event_analytics: bool = False
 
     @property
     def enabled(self):
@@ -116,6 +117,7 @@ class AdditionalProperties(ConfigurationBase):
     task_properties: Union[str, list[str]] = field(default_factory=list)
     task_property_history: Union[str, list[str]] = field(default_factory=list)
     object_properties: ObjectProperties = ObjectProperties.BASE
+    event_analytics_types: Union[str, list[str]] = field(default_factory=list)
 
 
 class HubspotObject(str, Enum):

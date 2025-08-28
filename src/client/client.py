@@ -32,6 +32,7 @@ ENDPOINT_FORMS = "marketing/v3/forms/"
 ENDPOINT_EMAIL_EVENTS = "email/public/v1/events"
 ENDPOINT_EMAIL_STATISTICS = "marketing-emails/v1/emails/with-statistics"
 ENDPOINT_CUSTOM_OBJECTS = "crm/v3/objects"
+ENDPOINT_EVENT_ANALYTICS = "events/v3/events"
 
 HUBSPOT_API_SEARCH_LIMIT = 9999
 PAGE_MAX_SIZE = 100
@@ -492,6 +493,44 @@ class HubspotClient(HttpClient):
 
     def get_forms(self) -> Generator:
         yield from self._get_paged_result_pages_v3(ENDPOINT_FORMS, {})
+
+    def get_event_analytics(self, event_types: List = None, **kwargs) -> Generator:
+        """
+        Fetch Event Analytics data from HubSpot
+
+        Args:
+            event_types: List of event types to filter (e.g. ['e_form_view', 'e_form_submission'])
+        """
+        parameters = {}
+
+        if event_types:
+            # Pattern like email_events - iterate through event types
+            for event_type in event_types:
+                params = parameters.copy()
+                params["eventType"] = event_type
+                yield from self._get_paged_result_pages_v3(
+                    ENDPOINT_EVENT_ANALYTICS, params
+                )
+        else:
+            # Fetch all events if no specific types requested
+            yield from self._get_paged_result_pages_v3(
+                ENDPOINT_EVENT_ANALYTICS, parameters
+            )
+
+    def get_event_types(self) -> List:
+        """
+        Fetch available event types from HubSpot Event Analytics API
+        """
+        try:
+            endpoint = f"{ENDPOINT_EVENT_ANALYTICS}/event-types"
+            req = self.get_raw(endpoint, timeout=MAX_TIMEOUT)
+            self._check_http_result(req, "event-types")
+            response = req.json()
+            return response.get("eventTypes", [])
+        except ConnectionError as exc:
+            raise HubspotClientException(
+                f"Connection to Hubspot failed due :{exc}"
+            ) from exc
 
     def get_associations_v4(
         self, object_id_generator: Iterator, from_object_type: str, to_object_type: str

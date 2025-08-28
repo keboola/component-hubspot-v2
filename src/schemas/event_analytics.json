@@ -1,0 +1,59 @@
+{
+  "name": "event_analytics",
+  "description": "HubSpot Event Analytics data",
+  "primary_keys": [
+    "id"
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "Event ID",
+      "base_type": "STRING"
+    },
+    {
+      "name": "eventType",
+      "description": "Type of event",
+      "base_type": "STRING"
+    },
+    {
+      "name": "objectType",
+      "description": "Object type",
+      "base_type": "STRING"
+    },
+    {
+      "name": "objectId",
+      "description": "Object ID",
+      "base_type": "STRING"
+    },
+    {
+      "name": "occurredAt",
+      "description": "Event timestamp",
+      "base_type": "TIMESTAMP"
+    },
+    {
+      "name": "properties",
+      "description": "Event properties",
+      "base_type": "STRING"
+    },
+    {
+      "name": "utk",
+      "description": "User token",
+      "base_type": "STRING"
+    },
+    {
+      "name": "email",
+      "description": "Email address",
+      "base_type": "STRING"
+    },
+    {
+      "name": "source",
+      "description": "Event source",
+      "base_type": "STRING"
+    },
+    {
+      "name": "sourceId",
+      "description": "Source ID",
+      "base_type": "STRING"
+    }
+  ]
+}

@@ -44,6 +44,7 @@ class Component(ComponentBase):
             "meeting": self.get_meetings,
             "email": self.get_emails,
             "email_statistic": self.get_email_statistics,
+            "event_analytics": self.get_event_analytics,
         }
         self.client: HubspotClient
         self._configuration: Configuration
@@ -183,6 +184,12 @@ class Component(ComponentBase):
             "email_statistic",
             self.client.get_email_statistics,
             updated_since=updated_since_timestamp,
+        )
+
+    def get_event_analytics(self) -> None:
+        event_types = self._configuration.additional_properties.event_analytics_types
+        self._process_endpoint_with_custom_schema(
+            "event_analytics", self.client.get_event_analytics, event_types=event_types
         )
 
     def get_owners(self) -> None:
@@ -668,6 +675,15 @@ class Component(ComponentBase):
             for prop in obj_prop
         ]
 
+    def _fetch_event_types(self) -> List[SelectElement]:
+        self._init_configuration()
+        self._init_client()
+        event_types = self.client.get_event_types()
+        return [
+            SelectElement(value=event_type, label=event_type.replace("_", " ").title())
+            for event_type in event_types
+        ]
+
     @sync_action("loadContactProperties")
     def load_contact_properties(self) -> List[SelectElement]:
         return self._fetch_object_properties("contact")
@@ -715,6 +731,10 @@ class Component(ComponentBase):
     @sync_action("loadTaskProperties")
     def load_task_properties(self) -> List[SelectElement]:
         return self._fetch_object_properties("task")
+
+    @sync_action("loadEventTypes")
+    def load_event_types(self) -> List[SelectElement]:
+        return self._fetch_event_types()
 
 
 if __name__ == "__main__":

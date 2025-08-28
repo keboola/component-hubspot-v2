@@ -195,6 +195,15 @@
                     "options": {
                         "grid_columns": 3
                     }
+                },
+                "event_analytics": {
+                    "title": "Event Analytics",
+                    "format": "checkbox",
+                    "type": "boolean",
+                    "default": false,
+                    "options": {
+                        "grid_columns": 3
+                    }
                 }
             }
         },
@@ -282,6 +291,27 @@
                         "BOUNCE",
                         "SENT"
                     ]
+                },
+                "event_analytics_types": {
+                    "type": "array",
+                    "title": "Event Analytics Types",
+                    "format": "select",
+                    "uniqueItems": true,
+                    "description": "Select which event types you want to fetch data for. Be aware this endpoint is available only for Hubspot enterprise customers. <a href='https://developers.hubspot.com/docs/reference/api/analytics-and-events/event-analytics#get-%2Fevents%2Fv3%2Fevents%2Fevent-types' target='_blank'>More info</a>",
+                    "propertyOrder": 16,
+                    "options": {
+                        "dependencies": {
+                            "event_analytics_hidden": "true"
+                        },
+                        "async": {
+                            "label": "Re-load event types",
+                            "action": "loadEventTypes"
+                        }
+                    },
+                    "items": {
+                        "enum": [],
+                        "type": "string"
+                    }
                 },
                 "custom_object_types": {
                     "title": "Custom Object IDs",
@@ -1138,6 +1168,16 @@
                         "hidden": true
                     },
                     "template": "{{custom_object_event_hide}}"
+                },
+                "event_analytics_hidden": {
+                    "type": "string",
+                    "watch": {
+                        "event_analytics_hide": "rootschema.endpoints.event_analytics"
+                    },
+                    "options": {
+                        "hidden": true
+                    },
+                    "template": "{{event_analytics_hide}}"
                 },
                 "form_hidden": {
                     "type": "string",
