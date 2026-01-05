@@ -306,7 +306,10 @@ class HubspotClient(HttpClient):
                                        object_type=custom_object)
 
     def get_contact_lists(self) -> Generator:
-        yield from self._get_paged_result_pages(ENDPOINTS_CONTACT_LISTS, {}, 'lists')
+        yield from self._get_paged_result_pages(
+            ENDPOINTS_CONTACT_LISTS, {}, 'lists',
+            limit_param='count', limit=250, has_more_field='has-more'
+        )
 
     def get_email_statistics(self, updated_since: Optional[int] = None) -> Generator:
         parameters = {"updated__gte": updated_since} if updated_since else {}
@@ -402,11 +405,13 @@ class HubspotClient(HttpClient):
             self._raise_exception_from_status_code(exc.status, endpoint_name, exc.body)
 
     def _get_paged_result_pages(self, endpoint: str, parameters: Dict, res_obj_name: str, offset: str = None,
-                                limit: int = DEFAULT_V1_LIMIT) -> Generator:
+                                limit: int = DEFAULT_V1_LIMIT, limit_param: str = 'limit',
+                                has_more_field: str = 'hasMore') -> Generator:
         has_more = True
         while has_more:
-            parameters['offset'] = offset
-            parameters['limit'] = limit
+            if offset is not None:
+                parameters['offset'] = offset
+            parameters[limit_param] = limit
             data = []
 
             try:
@@ -415,7 +420,7 @@ class HubspotClient(HttpClient):
                 raise HubspotClientException(f"Connection to Hubspot failed due :{exc}") from exc
             self._check_http_result(req, endpoint)
             req_response = self._parse_response_text(req, endpoint, parameters)
-            if req_response.get('hasMore'):
+            if req_response.get(has_more_field):
                 has_more = True
                 offset = req_response['offset']
             else:
