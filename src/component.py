@@ -85,7 +85,15 @@ class Component(ComponentBase):
 
     def _init_configuration(self):
         self.validate_configuration_parameters(Configuration.get_dataclass_required_parameters())
-        self._configuration: Configuration = Configuration.load_from_dict(self.configuration.parameters)
+        try:
+            self._configuration: Configuration = Configuration.load_from_dict(self.configuration.parameters)
+        except ValueError as e:
+            # An invalid enum value in the configuration (e.g. an association from_object/to_object
+            # set to an unsupported HubSpot object such as a custom object type id) surfaces as a bare
+            # ValueError, which would otherwise crash with an opaque internal error (exit 2). Re-raise
+            # as a UserException (exit 1) so the user sees the invalid value and can fix the config.
+            raise UserException(f"Invalid configuration value: {e}. Please make sure all configured "
+                                f"values are among the supported options.") from e
 
     def _init_client(self):
         self.client = HubspotClient(access_token=self._configuration.pswd_private_app_token,
